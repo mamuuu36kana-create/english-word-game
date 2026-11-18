@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>意味単語速読マスター</title>
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #f1f5f9 100%);
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-sub: #475569;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --accent: #4f46e5;
+      --accent-dark: #4338ca;
+      --accent-soft: #eef2ff;
+      --danger: #e11d48;
+      --danger-soft: #fff1f2;
+      --success: #059669;
+      --success-soft: #ecfdf5;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      transition: background 0.3s ease;
+    }
+
+    body.theme-home { background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #f1f5f9 100%); }
+    body.theme-ready { background: linear-gradient(135deg, #fefce8 0%, #fef08a 50%, #fde047 100%); }
+    body.theme-play { background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #eef2ff 100%); }
+    body.theme-correct { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #e0f2fe 100%); }
+    body.theme-wrong { background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 50%, #fee2e2 100%); }
+    body.theme-result-study { background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 50%, #fae8ff 100%); }
+    body.theme-result-ta-win { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #ccfbf1 100%); }
+    body.theme-result-ta-lose { background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 50%, #cbd5e1 100%); }
+
+    .hidden {
+      display: none !important;
+      pointer-events: none !important;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      touch-action: manipulation;
+      border: none;
+      outline: none;
+      transition: transform 0.1s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    .app-shell {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 12px 16px 36px;
+    }
+
+    /* Header */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 0 14px;
+    }
+
+    .brand-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      padding: 6px 4px;
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--text-main);
+    }
+
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      box-shadow: 0 3px 8px rgba(79, 70, 229, 0.28);
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav-pill {
+      min-height: 44px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 0.82rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+    }
+
+    .badge-count {
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    /* Card */
+    .card {
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.07);
+      margin-bottom: 14px;
+    }
+
+    .hero-title {
+      font-size: 1.45rem;
+      font-weight: 900;
+      margin: 0 0 6px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-sub {
+      font-size: 0.88rem;
+      color: var(--text-sub);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .section-label {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--text-sub);
+      margin: 0 0 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .choice-chip {
+      min-height: 54px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      color: var(--text-main);
+      font-weight: 800;
+      font-size: 0.95rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+
+    .choice-chip small {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .choice-chip.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent-dark);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.16);
+    }
+
+    .choice-chip.active small {
+      color: var(--accent);
+    }
+
+    /* Extra Time Stepper */
+    .time-control-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 10px 14px;
+      gap: 10px;
+    }
+
+    .stepper-btns {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .step-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: var(--text-main);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .extra-time-val {
+      min-width: 64px;
+      text-align: center;
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: var(--accent);
+    }
+
+    /* Mode Start Buttons */
+    .mode-btn {
+      width: 100%;
+      min-height: 68px;
+      padding: 14px 18px;
+      border-radius: 18px;
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-align: left;
+      margin-bottom: 10px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
+    }
+
+    .mode-btn.study {
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+    }
+
+    .mode-btn.ta {
+      background: linear-gradient(135deg, #059669, #0d9488);
+    }
+
+    .mode-btn span.sub {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      opacity: 0.92;
+      margin-top: 3px;
+    }
+
+    .status-banner {
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      color: #3730a3;
+      border-radius: 14px;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      line-height: 1.45;
+    }
+
+    .status-banner.retry {
+      background: #fff1f2;
+      border-color: #fecdd3;
+      color: #be123c;
+    }
+
+    /* Ready Countdown */
+    .ready-box {
+      min-height: 68vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+    }
+
+    .ready-text {
+      font-size: 3rem;
+      font-weight: 900;
+      color: #854d0e;
+      letter-spacing: -0.02em;
+      animation: popIn 0.28s ease;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.75); opacity: 0.3; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Play Header & Quit Button */
+    .play-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .quit-btn {
+      min-height: 46px;
+      min-width: 82px;
+      padding: 8px 14px;
+      border-radius: 14px;
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      color: #334155;
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+
+    .progress-pill {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.88rem;
+      color: var(--text-main);
+    }
+
+    /* Timer Bar */
+    .timer-wrap {
+      background: #e2e8f0;
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .timer-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #3b82f6, #10b981);
+      transition: width 0.08s linear;
+    }
+
+    .timer-fill.danger {
+      background: linear-gradient(90deg, #ef4444, #f97316);
+    }
+
+    .timer-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-sub);
+      margin-bottom: 12px;
+    }
+
+    /* Sentence Area & Tappable Words */
+    .sentence-box {
+      font-size: 1.38rem;
+      line-height: 1.75;
+      font-weight: 800;
+      color: #0f172a;
+      word-spacing: 2px;
+      margin: 6px 0 10px;
+    }
+
+    .word-token {
+      display: inline-block;
+      padding: 2px 5px;
+      margin: 2px 1px;
+      border-radius: 8px;
+      cursor: pointer;
+      border-bottom: 2px dashed #cbd5e1;
+      transition: background 0.15s ease;
+    }
+
+    .word-token:active {
+      background: #fef08a;
+    }
+
+    .word-token.content-word {
+      color: #dc2626;
+      background: #fee2e2;
+      border-bottom-color: #f87171;
+    }
+
+    .word-hint-toast {
+      min-height: 42px;
+      background: #fefce8;
+      border: 1px solid #fde047;
+      color: #713f12;
+      border-radius: 12px;
+      padding: 8px 12px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    /* Option Buttons */
+    .option-btn {
+      width: 100%;
+      min-height: 60px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      color: var(--text-main);
+      font-size: 0.98rem;
+      font-weight: 700;
+      line-height: 1.45;
+      text-align: left;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
+    }
+
+    .option-index {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      background: #f1f5f9;
+      color: #475569;
+      font-weight: 900;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* Feedback View */
+    .feedback-banner {
+      padding: 14px 16px;
+      border-radius: 16px;
+      font-weight: 900;
+      font-size: 1.15rem;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .feedback-banner.ok {
+      background: #dbeafe;
+      color: #1e40af;
+      border: 2px solid #93c5fd;
+    }
+
+    .feedback-banner.ng {
+      background: #ffe4e6;
+      color: #9f1239;
+      border: 2px solid #fda4af;
+    }
+
+    .jp-answer-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin: 12px 0;
+    }
+
+    .primary-action-btn {
+      width: 100%;
+      min-height: 58px;
+      border-radius: 16px;
+      background: #1e293b;
+      color: #ffffff;
+      font-size: 1.05rem;
+      font-weight: 900;
+      margin-top: 8px;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.16);
+    }
+
+    .save-sentence-btn {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 14px;
+      background: #fffbeb;
+      border: 2px solid #fcd34d;
+      color: #92400e;
+      font-size: 0.9rem;
+      font-weight: 800;
+      margin-top: 8px;
+    }
+
+    /* Quit Confirm Screen */
+    .quit-confirm-box {
+      min-height: 66vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .quit-confirm-title {
+      font-size: 1.4rem;
+      font-weight: 900;
+      margin-bottom: 24px;
+      color: #0f172a;
+    }
+
+    .quit-confirm-actions {
+      width: 100%;
+      max-width: 360px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .btn-quit-red {
+      width: 100%;
+      min-height: 60px;
+      border-radius: 16px;
+      background: #ffffff;
+      border: 2px solid #fda4af;
+      color: #dc2626;
+      font-size: 1.1rem;
+      font-weight: 900;
+    }
+
+    .btn-continue-blue {
+      width: 100%;
+      min-height: 60px;
+      border-radius: 16px;
+      background: #ffffff;
+      border: 2px solid #93c5fd;
+      color: #2563eb;
+      font-size: 1.1rem;
+      font-weight: 900;
+    }
+
+    /* Lists (Vocab & Saved Sentences) */
+    .list-item-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+
+    .delete-mini-btn {
+      min-height: 40px;
+      padding: 6px 12px;
+      border-radius: 10px;
+      background: #fee2e2;
+      color: #b91c1c;
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(203, 213, 225, 0.8);
+      border-radius: 16px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body class="theme-home">
+  <div class="app-shell">
+    <!-- Top Header -->
+    <header class="top-bar" id="mainHeader">
+      <button type="button" class="brand-btn" id="logoHomeBtn">
+        <span class="brand-icon">⚡</span>
+        <span>意味単語速読</span>
+      </button>
+      <div class="nav-actions">
+        <button type="button" class="nav-pill" id="openSavedBtn">
+          <span>📑 保存英文</span>
+          <span class="badge-count" id="savedCountBadge">0</span>
+        </button>
+        <button type="button" class="nav-pill" id="openVocabBtn">
+          <span>📚 単語帳</span>
+          <span class="badge-count" id="vocabCountBadge">0</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- 1. HOME VIEW -->
+    <main id="viewHome">
+      <div class="card">
+        <h1 class="hero-title">意味単語を瞬時に見抜く</h1>
+        <p class="hero-sub">赤字になる「意味単語（名詞・動詞・形容詞・副詞）」だけを拾って、ネイティブ速度で意味を掴むトレーニング。</p>
+      </div>
+
+      <div id="homeRetryBanner" class="status-banner retry hidden"></div>
+      <div id="homeVocabBanner" class="status-banner hidden"></div>
+
+      <div class="card">
+        <div class="section-label"><span>① 単語の難易度</span></div>
+        <div class="grid-2" id="diffGroup">
+          <button type="button" class="choice-chip active" data-diff="easy">簡単<small>中学・基礎語彙</small></button>
+          <button type="button" class="choice-chip" data-diff="normal">普通<small>高校・日常実用</small></button>
+          <button type="button" class="choice-chip" data-diff="hard">難しい<small>ニュース・論理</small></button>
+          <button type="button" class="choice-chip" data-diff="demon">鬼畜<small>学術・高度抽象語</small></button>
+        </div>
+
+        <div class="section-label" style="margin-top: 16px;"><span>② 文章の単語数</span></div>
+        <div class="grid-2" id="lenGroup">
+          <button type="button" class="choice-chip active" data-len="3-5">3〜5語<small>超短文フレーズ</small></button>
+          <button type="button" class="choice-chip" data-len="6-8">6〜8語<small>基本の1文</small></button>
+          <button type="button" class="choice-chip" data-len="9-12">9〜12語<small>修飾つき標準文</small></button>
+          <button type="button" class="choice-chip" data-len="13+">13語〜<small>複文・長文構造</small></button>
+        </div>
+
+        <div class="section-label" style="margin-top: 16px;">
+          <span>③ 制限時間の延長（学習モード）</span>
+          <span style="font-size:0.74rem; color:#64748b;">基本＋4択を読む時間＋延長</span>
+        </div>
+        <div class="time-control-box">
+          <span style="font-size:0.85rem; font-weight:700; color:#475569;">追加バッファ</span>
+          <div class="stepper-btns">
+            <button type="button" class="step-btn" id="timeMinusBtn">−</button>
+            <span class="extra-time-val" id="extraTimeDisplay">+0秒</span>
+            <button type="button" class="step-btn" id="timePlusBtn">＋</button>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="mode-btn study" id="startStudyBtn">
+        <div>
+          📘 学習モード（10問）
+          <span class="sub">1問ごとに意味単語を赤字解説・未知語タップ保存</span>
+        </div>
+        <span style="font-size:1.3rem;">▶</span>
+      </button>
+
+      <button type="button" class="mode-btn ta" id="startTaBtn">
+        <div>
+          ⏱️ タイムアタック（10問連続）
+          <span class="sub">1問でも間違えたら即終了・ネイティブ速度と競争</span>
+        </div>
+        <span style="font-size:1.3rem;">▶</span>
+      </button>
+    </main>
+
+    <!-- 2. READY COUNTDOWN VIEW -->
+    <section id="viewReady" class="hidden">
+      <div class="ready-box">
+        <div style="font-size:0.95rem; font-weight:800; color:#854d0e; margin-bottom:12px;">集中してください…</div>
+        <div class="ready-text" id="readyLabel">Are you ready?</div>
+      </div>
+    </section>
+
+    <!-- 3. PLAY VIEW -->
+    <section id="viewPlay" class="hidden">
+      <div class="play-top-bar">
+        <button type="button" class="quit-btn" id="pauseQuitBtn">中断</button>
+        <div class="progress-pill" id="playProgressText">第 1 / 10 問</div>
+        <div class="progress-pill" id="playModeBadge">学習</div>
+      </div>
+
+      <div class="card">
+        <div class="timer-wrap">
+          <div class="timer-fill" id="timerFill"></div>
+        </div>
+        <div class="timer-meta">
+          <span id="timerDetailText">残り --.- 秒</span>
+          <span id="retryBadge" class="hidden" style="color:#e11d48;">🔥 苦手克服リベンジ問題</span>
+        </div>
+
+        <div style="font-size:0.76rem; color:#64748b; font-weight:700;">※分からない英単語をタップすると意味が出て単語帳に保存されます</div>
+        <div class="sentence-box" id="playSentenceBox"></div>
+        <div class="word-hint-toast hidden" id="playWordToast"></div>
+      </div>
+
+      <div id="optionsContainer"></div>
+    </section>
+
+    <!-- 4. QUIT CONFIRMATION VIEW (Hides Active Question Completely) -->
+    <section id="viewQuitConfirm" class="hidden">
+      <div class="card quit-confirm-box">
+        <div class="quit-confirm-title">本当に中断しますか</div>
+        <div class="quit-confirm-actions">
+          <button type="button" class="btn-quit-red" id="confirmQuitRedBtn">中断</button>
+          <button type="button" class="btn-continue-blue" id="cancelQuitBlueBtn">続ける</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. FEEDBACK VIEW -->
+    <section id="viewFeedback" class="hidden">
+      <div class="card">
+        <div class="feedback-banner ok" id="feedbackBanner">
+          <span id="feedbackTitle">⭕ 正解！</span>
+          <span id="feedbackSubBadge" style="font-size:0.82rem;"></span>
+        </div>
+
+        <div style="font-size:0.8rem; font-weight:800; color:#475569; margin-bottom:4px;">
+          赤字 ＝ 意味単語（内容語） ※タップで単語帳へ保存可
+        </div>
+        <div class="sentence-box" id="feedbackSentenceBox"></div>
+        <div class="word-hint-toast hidden" id="feedbackWordToast"></div>
+
+        <div class="jp-answer-box">
+          <div style="font-size:0.75rem; font-weight:800; color:#64748b; margin-bottom:4px;">正しい日本語訳</div>
+          <div style="font-size:1.05rem; font-weight:800; color:#0f172a; line-height:1.5;" id="feedbackCorrectJp"></div>
+          <div id="feedbackUserChoiceNote" style="font-size:0.82rem; color:#be123c; font-weight:700; margin-top:6px;"></div>
+        </div>
+
+        <button type="button" class="save-sentence-btn" id="manualSaveSentenceBtn">⭐ この英文を保存する</button>
+        <button type="button" class="primary-action-btn" id="nextQuestionBtn">次へ →</button>
+      </div>
+    </section>
+
+    <!-- 6. RESULT VIEW -->
+    <section id="viewResult" class="hidden">
+      <div class="card">
+        <h2 style="margin:0 0 6px; font-size:1.4rem; font-weight:900;" id="resultHeading">学習モード結果</h2>
+        <p style="margin:0; font-size:0.88rem; color:#475569;" id="resultSubText"></p>
+
+        <div class="stat-grid" id="resultStatsGrid"></div>
+
+        <div id="resultTappedWrap" class="hidden" style="margin-top:14px;">
+          <div class="section-label"><span>今回タップして調べた単語</span></div>
+          <div id="resultTappedList"></div>
+        </div>
+
+        <button type="button" class="primary-action-btn" id="playAgainBtn" style="background:#4f46e5; margin-top:14px;">もう一回同じモードで遊ぶ</button>
+        <button type="button" class="primary-action-btn" id="backHomeFromResultBtn" style="background:#334155;">ホーム画面に戻る</button>
+      </div>
+    </section>
+
+    <!-- 7. VOCABULARY BOOK VIEW -->
+    <section id="viewVocab" class="hidden">
+      <div class="card">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+          <h2 style="margin:0; font-size:1.25rem; font-weight:900;">📚 マイ単語帳</h2>
+          <button type="button" class="nav-pill" id="closeVocabBtn">← 戻る</button>
+        </div>
+        <p style="margin:0 0 12px; font-size:0.82rem; color:#475569;">プレイ中にタップした単語が自動保存され、次回以降の問題に優先的に出題されます。</p>
+        <div id="vocabListContainer"></div>
+      </div>
+    </section>
+
+    <!-- 8. SAVED SENTENCES VIEW -->
+    <section id="viewSaved" class="hidden">
+      <div class="card">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+          <h2 style="margin:0; font-size:1.25rem; font-weight:900;">📑 保存した英文</h2>
+          <button type="button" class="nav-pill" id="closeSavedBtn">← 戻る</button>
+        </div>
+        <p style="margin:0 0 12px; font-size:0.82rem; color:#475569;">間違えた英文や手動保存した英文を、意味単語（赤字）付きで見返せます。</p>
+        <div id="savedListContainer"></div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      const STORAGE_KEYS = {
+        VOCAB: "swm_vocab_v3",
+        SAVED: "swm_saved_sentences_v3",
+        RETRY: "swm_retry_queue_v3",
+        HISTORY: "swm_seen_history_v3",
+        BEST_TA: "swm_best_ta_v3"
+      };
+
+      const STOP_WORDS = new Set([
+        "a","an","the","in","on","at","to","for","with","by","about","against","between","into","through",
+        "during","before","after","above","below","from","up","down","of","off","over","under","again",
+        "further","then","once","here","there","when","where","why","how","all","any","both","each",
+        "few","more","most","other","some","such","no","nor","not","only","own","same","so","than",
+        "too","very","s","t","can","will","just","don","should","now","i","me","my","myself","we","our",
+        "ours","ourselves","you","your","yours","yourself","yourselves","he","him","his","himself","she",
+        "her","hers","herself","it","its","itself","they","them","their","theirs","themselves","what",
+        "which","who","whom","this","that","these","those","am","is","are","was","were","be","been",
+        "being","have","has","had","having","do","does","did","doing","would","could","ought","as","if",
+        "or","because","until","while","but","yet","although","though","since","unless"
+      ]);
+
+      const BUILTIN_DICTIONARY = {
+        "train": "電車・訓練する", "arrived": "到着した", "early": "早く", "today": "今日",
+        "children": "子どもたち", "love": "大好きだ", "sweet": "甘い", "apples": "リンゴ",
+        "fresh": "新鮮な", "snow": "雪", "covered": "覆った", "mountains": "山々",
+        "quiet": "静かな", "library": "図書館", "opens": "開く", "nine": "9時",
+        "doctors": "医者たち", "warned": "警告した", "patients": "患者たち", "sugar": "砂糖",
+        "heavy": "激しい・重い", "rain": "雨", "delayed": "遅らせた", "morning": "朝の", "flight": "便・フライト",
+        "local": "地元の", "artists": "芸術家たち", "painted": "描いた", "colorful": "カラフルな", "murals": "壁画",
+        "modern": "現代の", "satellites": "人工衛星", "predict": "予測する", "severe": "激しい", "storms": "嵐",
+        "careful": "注意深い", "planning": "計画", "prevents": "防ぐ", "costly": "高額な", "mistakes": "ミス",
+        "ancient": "古代の", "coins": "硬貨", "revealed": "明らかにした", "hidden": "隠された", "trade": "貿易", "routes": "ルート",
+        "scientists": "科学者たち", "discovered": "発見した", "rare": "珍しい", "bacteria": "細菌", "beneath": "〜の下に", "deep": "深い", "ocean": "海", "ice": "氷",
+        "renewable": "再生可能な", "energy": "エネルギー", "projects": "事業", "reduced": "減らした", "carbon": "炭素", "emissions": "排出量", "across": "〜中で", "several": "いくつかの", "regions": "地域",
+        "strict": "厳しい", "privacy": "プライバシー", "laws": "法律", "require": "要求する", "tech": "IT・技術", "companies": "企業", "protect": "保護する", "user": "利用者", "data": "データ",
+        "experienced": "熟練した", "surgeons": "外科医たち", "collaborated": "協力した", "closely": "緊密に", "complete": "完了する", "delicate": "繊細な", "heart": "心臓", "operation": "手術",
+        "rapid": "急速な", "urbanization": "都市化", "often": "しばしば", "strains": "負担をかける", "public": "公共の", "transportation": "交通機関", "affordable": "手頃な", "housing": "住宅", "supplies": "供給",
+        "ambitious": "野心的な", "astronomers": "天文学者たち", "launched": "打ち上げた", "infrared": "赤外線の", "telescopes": "望遠鏡", "observe": "観測する", "distant": "遠くの", "galaxies": "銀河", "forming": "形成中の",
+        "unprecedented": "前例のない", "economic": "経済的な", "sanctions": "制裁", "disrupted": "混乱させた", "global": "世界的な", "supply": "供給", "chains": "連鎖・網", "throughout": "〜の間ずっと", "autumn": "秋",
+        "contemporary": "現代の", "neuroscientists": "神経科学者たち", "investigate": "調査する", "neural": "神経の", "mechanisms": "仕組み", "underlying": "根底にある", "human": "人間の", "consciousness": "意識",
+        "stringent": "厳格な", "regulatory": "規制の", "frameworks": "枠組み", "mitigate": "緩和する", "systemic": "全体の", "vulnerabilities": "脆弱性", "within": "〜内の", "financial": "金融の", "institutions": "機関",
+        "ubiquitous": "至る所にある", "surveillance": "監視", "algorithms": "アルゴリズム", "inadvertently": "うっかり・知らずに", "perpetuate": "永続させる", "societal": "社会の", "biases": "偏見", "despite": "〜にもかかわらず", "ostensible": "表面上の", "neutrality": "中立性",
+        "ephemeral": "つかの間の", "bioluminescent": "生物発光の", "organisms": "生物", "illuminate": "照らす", "abyssal": "深海の", "trenches": "海溝", "eluding": "逃れながら", "conventional": "従来の", "taxonomic": "分類学の", "classification": "分類",
+        "ambivalent": "相反する感情の", "diplomats": "外交官たち", "crafted": "作り上げた", "deliberately": "意図的に", "equivocal": "曖昧な", "treaty": "条約", "avert": "回避する", "imminent": "差し迫った", "geopolitical": "地政学的な", "escalation": "激化"
+      };
+
+      // Rich Categorized Question Bank (4 difficulties x 4 lengths x multiple genres)
+      const QUESTION_BANK = [
+        // EASY 3-5
+        { diff: "easy", len: "3-5", en: "The train arrived early today.", content: ["train","arrived","early","today"], jp: "その電車は今日早く到着した。", wrong: ["そのバスは昨日遅れて出発した。","その電車は明日早く到着する予定だ。","その駅は今日とても混雑していた。"], words: {train:"電車",arrived:"到着した",early:"早く",today:"今日"} },
+        { diff: "easy", len: "3-5", en: "Children love sweet red apples.", content: ["Children","love","sweet","red","apples"], jp: "子どもたちは甘い赤いリンゴが大好きだ。", wrong: ["子どもたちは酸っぱい緑のブドウが苦手だ。","大人たちは甘い赤いイチゴをよく買う。","子どもたちは冷たい甘いアイスクリームを食べた。"], words: {Children:"子どもたち",love:"大好きだ",sweet:"甘い",red:"赤い",apples:"リンゴ"} },
+        { diff: "easy", len: "3-5", en: "Fresh snow covered high mountains.", content: ["Fresh","snow","covered","high","mountains"], jp: "新しい雪が高い山々を覆った。", wrong: ["激しい雨が高い山々を濡らした。","白い雲が広い海を覆い隠した。","新しい雪が小さな町の屋根に積もった。"], words: {Fresh:"新しい・新鮮な",snow:"雪",covered:"覆った",high:"高い",mountains:"山々"} },
+        { diff: "easy", len: "3-5", en: "Our quiet library opens early.", content: ["quiet","library","opens","early"], jp: "私たちの静かな図書館は早く開く。", wrong: ["私たちの大きな体育館は夜遅く閉まる。","駅前の古い本屋は日曜日に休む。","私たちの静かな教室は朝早く掃除される。"], words: {quiet:"静かな",library:"図書館",opens:"開く",early:"早く"} },
+        { diff: "easy", len: "3-5", en: "Warm sunlight filled every room.", content: ["Warm","sunlight","filled","every","room"], jp: "暖かい日光がすべての部屋を満たした。", wrong: ["冷たい夜風がすべての窓から吹き込んだ。","明るい電灯が広い廊下を照らした。","暖かい春の雨が乾いた庭を潤した。"], words: {Warm:"暖かい",sunlight:"日光",filled:"満たした",every:"すべての",room:"部屋"} },
+        { diff: "easy", len: "3-5", en: "Young musicians practiced every evening.", content: ["Young","musicians","practiced","every","evening"], jp: "若い音楽家たちは毎晩練習した。", wrong: ["有名な画家たちは毎朝公園で絵を描いた。","若い選手たちは毎週日曜日に試合をした。","ベテランの音楽家たちは新しい曲を録音した。"], words: {Young:"若い",musicians:"音楽家たち",practiced:"練習した",every:"毎〜",evening:"晩・夕方"} },
+
+        // EASY 6-8
+        { diff: "easy", len: "6-8", en: "Heavy morning rain delayed our school bus.", content: ["Heavy","morning","rain","delayed","school","bus"], jp: "朝の激しい雨が私たちのスクールバスを遅らせた。", wrong: ["夕方の強い風が私たちの電車を止めた。","朝の深い霧が空港の飛行機を遅らせた。","昨夜の激しい雪が学校の授業を中止にした。"], words: {Heavy:"激しい",morning:"朝の",rain:"雨",delayed:"遅らせた",school:"学校の",bus:"バス"} },
+        { diff: "easy", len: "6-8", en: "Friendly neighbors shared homemade bread with us.", content: ["Friendly","neighbors","shared","homemade","bread"], jp: "親切な隣人たちが手作りパンを私たちに分けてくれた。", wrong: ["親切な同僚たちが新鮮な果物を私たちに贈った。","近くのパン屋が焼きたてのケーキを安く売った。","親切な隣人たちが庭で育てた野菜を届けてくれた。"], words: {Friendly:"親切な",neighbors:"隣人たち",shared:"分け合った",homemade:"手作りの",bread:"パン"} },
+        { diff: "easy", len: "6-8", en: "Many tourists visit this historic temple yearly.", content: ["Many","tourists","visit","historic","temple","yearly"], jp: "多くの観光客が毎年この歴史的な寺院を訪れる。", wrong: ["地元の学生たちが毎月この新しい博物館を見学する。","多くの外国人観光客がこの美しい庭園で写真を撮る。","少数の研究者が毎年この古い城を調査する。"], words: {Many:"多くの",tourists:"観光客",visit:"訪れる",historic:"歴史的な",temple:"寺院",yearly:"毎年"} },
+        { diff: "easy", len: "6-8", en: "Careful drivers always check mirrors before turning.", content: ["Careful","drivers","always","check","mirrors","turning"], jp: "注意深い運転手は曲がる前に必ずミラーを確認する。", wrong: ["初心者の運転手は駐車する前に何度も後ろを見る。","注意深い歩行者は道路を渡る前に必ず左右を見る。","熟練の運転手は出発する前にタイヤの空気を確認する。"], words: {Careful:"注意深い",drivers:"運転手",always:"いつも",check:"確認する",mirrors:"鏡・ミラー",turning:"曲がること"} },
+        { diff: "easy", len: "6-8", en: "Bright stars shone clearly in desert skies.", content: ["Bright","stars","shone","clearly","desert","skies"], jp: "明るい星々が砂漠の夜空にくっきりと輝いた。", wrong: ["満月が静かな湖の水面に美しく映った。","明るい星々が山頂のキャンプ場の上で輝いた。","色とりどりの花火が夏の港の空に打ち上がった。"], words: {Bright:"明るい",stars:"星々",shone:"輝いた",clearly:"くっきりと",desert:"砂漠",skies:"空"} },
+
+        // EASY 9-12
+        { diff: "easy", len: "9-12", en: "Local students planted fifty young trees along the river bank.", content: ["Local","students","planted","fifty","young","trees","along","river","bank"], jp: "地元の生徒たちが川岸に沿って50本の若木を植えた。", wrong: ["地域のボランティアが公園の周りに100本の花を植えた。","地元の生徒たちが川岸に落ちているゴミを50袋拾った。","市民団体が山道に沿って古い桜の木を手入れした。"], words: {Local:"地元の",students:"生徒たち",planted:"植えた",fifty:"50の",young:"若い",trees:"木々",river:"川",bank:"岸・土手"} },
+        { diff: "easy", len: "9-12", en: "Our science teacher showed an exciting video about deep oceans.", content: ["science","teacher","showed","exciting","video","deep","oceans"], jp: "私たちの理科の先生は深海についてのワクワクする動画を見せた。", wrong: ["私たちの歴史の先生は古代遺跡についての長い映画を見せた。","私たちの理科の先生は宇宙の惑星についての面白い本を貸した。","有名な海洋学者が深海生物についての写真集を出版した。"], words: {science:"理科・科学",teacher:"先生",showed:"見せた",exciting:"ワクワクする",video:"動画",deep:"深い",oceans:"海"} },
+        { diff: "easy", len: "9-12", en: "Busy commuters hurried toward the subway station during rush hour.", content: ["Busy","commuters","hurried","toward","subway","station","rush","hour"], jp: "忙しい通勤客たちはラッシュアワーの間、地下鉄の駅へ向かって急いだ。", wrong: ["多くの旅行客たちが連休の朝、空港のロビーへ向かって歩いた。","忙しい学生たちが授業の前に大学の図書館へ向かって走った。","疲れた会社員たちが終電の時間にバスの停留所へ急いだ。"], words: {Busy:"忙しい",commuters:"通勤客",hurried:"急いだ",toward:"〜へ向かって",subway:"地下鉄",station:"駅",rush:"混雑",hour:"時間帯"} },
+
+        // EASY 13+
+        { diff: "easy", len: "13+", en: "Every Saturday morning, my grandfather wakes up early to water vegetables in his garden.", content: ["Saturday","morning","grandfather","wakes","early","water","vegetables","garden"], jp: "毎週土曜日の朝、私の祖父は庭の野菜に水をやるために早起きする。", wrong: ["毎週日曜日の夕方、私の祖母は裏庭の花に肥料をやるために外に出る。","平日の朝早く、私の父は駅まで歩く前に庭の芝生を刈る。","毎週土曜日の午後、私の祖父は畑で収穫した野菜を近所に配る。"], words: {Saturday:"土曜日",morning:"朝",grandfather:"祖父",wakes:"起きる",early:"早く",water:"水をやる",vegetables:"野菜",garden:"庭"} },
+        { diff: "easy", len: "13+", en: "Although the weather forecast predicted rain, clear blue skies lasted throughout our outdoor picnic.", content: ["weather","forecast","predicted","rain","clear","blue","skies","lasted","outdoor","picnic"], jp: "天気予報は雨を予測していたが、屋外でのピクニックの間ずっと澄んだ青空が続いた。", wrong: ["天気予報は晴れを伝えていたが、キャンプの途中で突然激しい雨が降り出した。","天気予報通り午前中は雨が降ったが、午後の運動会までには青空が広がった。","強い風が吹くという予報だったが、海辺での散歩の間ずっと穏やかな天気だった。"], words: {weather:"天気",forecast:"予報",predicted:"予測した",rain:"雨",clear:"澄んだ",blue:"青い",skies:"空",lasted:"続いた",outdoor:"屋外の",picnic:"ピクニック"} },
+
+        // NORMAL 3-5
+        { diff: "normal", len: "3-5", en: "Careful planning prevents costly mistakes.", content: ["Careful","planning","prevents","costly","mistakes"], jp: "入念な計画は手痛い失敗を防ぐ。", wrong: ["拙速な決断は大きな利益を生む。","綿密な調査は新たな課題を発見する。","入念な準備は余計な時間を奪う。"], words: {Careful:"入念な",planning:"計画",prevents:"防ぐ",costly:"手痛い・高価な",mistakes:"失敗"} },
+        { diff: "normal", len: "3-5", en: "Modern satellites predict severe storms.", content: ["Modern","satellites","predict","severe","storms"], jp: "現代の人工衛星は激しい嵐を予測する。", wrong: ["最新の観測船は海底の地震を記録する。","現代の気象台は穏やかな気候を分析する。","大型の人工衛星は世界の通信を支える。"], words: {Modern:"現代の",satellites:"人工衛星",predict:"予測する",severe:"激しい",storms:"嵐"} },
+        { diff: "normal", len: "3-5", en: "Regular exercise improves mental focus.", content: ["Regular","exercise","improves","mental","focus"], jp: "定期的な運動は精神的な集中力を高める。", wrong: ["十分な睡眠は身体の疲労を回復させる。","毎日の読書は論理的な思考力を養う。","適度な休息は仕事の効率を改善する。"], words: {Regular:"定期的な",exercise:"運動",improves:"高める・改善する",mental:"精神の",focus:"集中力"} },
+        { diff: "normal", len: "3-5", en: "Ancient coins revealed hidden routes.", content: ["Ancient","coins","revealed","hidden","routes"], jp: "古代の硬貨が隠された交易路を明らかにした。", wrong: ["古い地図が失われた財宝の場所を示した。","古代の壁画が当時の生活様式を伝えた。","発掘された土器が新たな文化圏を証明した。"], words: {Ancient:"古代の",coins:"硬貨",revealed:"明らかにした",hidden:"隠された",routes:"ルート・道筋"} },
+
+        // NORMAL 6-8
+        { diff: "normal", len: "6-8", en: "Doctors warned patients against consuming excessive sugar.", content: ["Doctors","warned","patients","consuming","excessive","sugar"], jp: "医師たちは患者に対し過剰な砂糖の摂取を控えるよう警告した。", wrong: ["栄養士たちは学生に対し毎日の朝食を抜かないよう助言した。","医師たちは高齢者に対し適度な塩分を補給するよう指導した。","研究者たちは消費者に対し加工食品の添加物に注意するよう促した。"], words: {Doctors:"医師たち",warned:"警告した",patients:"患者たち",consuming:"摂取すること",excessive:"過剰な",sugar:"砂糖"} },
+        { diff: "normal", len: "6-8", en: "Remote work transformed traditional office culture permanently.", content: ["Remote","work","transformed","traditional","office","culture","permanently"], jp: "リモートワークは従来のオフィス文化を恒久的に変革した。", wrong: ["最新技術は製造業の生産ラインを劇的に効率化した。","フレックス制は若い世代の働き方を一時的に変化させた。","オンライン会議は国際企業の出張コストを大幅に削減した。"], words: {Remote:"遠隔の",work:"勤務・仕事",transformed:"変革した",traditional:"従来の",office:"オフィス",culture:"文化",permanently:"恒久的に"} },
+        { diff: "normal", len: "6-8", en: "Museums preserve fragile artifacts for future generations.", content: ["Museums","preserve","fragile","artifacts","future","generations"], jp: "博物館は壊れやすい工芸品を将来の世代のために保存している。", wrong: ["図書館は貴重な古文書を研究者のためにデジタル化している。","美術館は有名な絵画を世界中の観客のために展示している。","自治体は歴史的な建造物を地域の観光のために修復している。"], words: {Museums:"博物館",preserve:"保存する",fragile:"壊れやすい",artifacts:"工芸品・遺物",future:"将来の",generations:"世代"} },
+
+        // NORMAL 9-12
+        { diff: "normal", len: "9-12", en: "Renewable energy projects reduced carbon emissions across several coastal regions.", content: ["Renewable","energy","projects","reduced","carbon","emissions","several","coastal","regions"], jp: "再生可能エネルギー事業がいくつかの沿岸地域全体で炭素排出量を削減した。", wrong: ["新しい環境規制が全国の工業地帯で水質汚染を大幅に減らした。","太陽光発電の導入が山間部の自治体で電力コストを引き下げた。","省エネ技術の普及が複数の都市部で温室効果ガスの増加を抑えた。"], words: {Renewable:"再生可能な",energy:"エネルギー",projects:"事業",reduced:"削減した",carbon:"炭素",emissions:"排出量",several:"いくつかの",coastal:"沿岸の",regions:"地域"} },
+        { diff: "normal", len: "9-12", en: "Strict privacy laws require tech companies to protect user data.", content: ["Strict","privacy","laws","require","tech","companies","protect","user","data"], jp: "厳格なプライバシー法はIT企業に利用者データの保護を義務付けている。", wrong: ["新しい著作権法は配信サービスにクリエイターの利益還元を求めている。","国際的な安全基準は自動車メーカーに品質検査の徹底を課している。","厳格な金融規制は銀行に対して顧客資産の透明な管理を要求している。"], words: {Strict:"厳格な",privacy:"プライバシー",laws:"法律",require:"要求する",tech:"技術・IT",companies:"企業",protect:"保護する",user:"利用者",data:"データ"} },
+
+        // NORMAL 13+
+        { diff: "normal", len: "13+", en: "Experienced surgeons collaborated closely for six hours to complete the delicate heart operation.", content: ["Experienced","surgeons","collaborated","closely","six","hours","complete","delicate","heart","operation"], jp: "熟練した外科医たちが繊細な心臓手術を完了させるため6時間にわたり緊密に協力した。", wrong: ["若手の研究員たちが新しい治療薬を開発するため何ヶ月も研究室で実験を続けた。","救急医療チームが重症患者を搬送するため悪天候の中を数時間かけて移動した。","経験豊富な技術者たちが複雑な通信障害を復旧させるため徹夜で作業にあたった。"], words: {Experienced:"熟練した",surgeons:"外科医",collaborated:"協力した",closely:"緊密に",six:"6",hours:"時間",complete:"完了する",delicate:"繊細な",heart:"心臓",operation:"手術"} },
+        { diff: "normal", len: "13+", en: "Rapid urbanization often strains public transportation networks and reduces affordable housing supplies.", content: ["Rapid","urbanization","often","strains","public","transportation","networks","reduces","affordable","housing","supplies"], jp: "急速な都市化はしばしば公共交通網に負担をかけ、手頃な価格の住宅供給を減少させる。", wrong: ["急激な人口減少は地方の鉄道網の維持を困難にし、空き家の増加を引き起こす。","大規模な再開発は都心の商業施設を活性化させ、新たな雇用機会を創出する。","観光業の急成長は地域の宿泊施設を不足させ、物価の上昇を招くことがある。"], words: {Rapid:"急速な",urbanization:"都市化",often:"しばしば",strains:"負担をかける",public:"公共の",transportation:"交通",networks:"網",reduces:"減らす",affordable:"手頃な",housing:"住宅",supplies:"供給"} },
+
+        // HARD 3-5
+        { diff: "hard", len: "3-5", en: "Economic sanctions disrupted global trade.", content: ["Economic","sanctions","disrupted","global","trade"], jp: "経済制裁が世界貿易を混乱させた。", wrong: ["金融緩和が国内消費を刺激した。","貿易協定が国際投資を促進した。","関税撤廃が地域経済を活性化した。"], words: {Economic:"経済の",sanctions:"制裁",disrupted:"混乱させた",global:"世界の",trade:"貿易"} },
+        { diff: "hard", len: "3-5", en: "Ambiguous policies hinder corporate investment.", content: ["Ambiguous","policies","hinder","corporate","investment"], jp: "曖昧な政策は企業の投資を妨げる。", wrong: ["明確な基準は海外からの進出を促す。","厳格な規制は市場の独占を抑制する。","柔軟な税制は新規事業の創業を支える。"], words: {Ambiguous:"曖昧な",policies:"政策",hinder:"妨げる",corporate:"企業の",investment:"投資"} },
+        { diff: "hard", len: "3-5", en: "Empirical evidence refuted earlier assumptions.", content: ["Empirical","evidence","refuted","earlier","assumptions"], jp: "実証的な証拠が以前の仮説に反証した。", wrong: ["理論的な予測が従来の定説を裏付けた。","新たな観測データが初期の仮説を補強した。","統計的な分析が未知の相関関係を示した。"], words: {Empirical:"実証的な",evidence:"証拠",refuted:"反証した",earlier:"以前の",assumptions:"仮定・仮説"} },
+
+        // HARD 6-8
+        { diff: "hard", len: "6-8", en: "Scientists discovered rare bacteria beneath deep Antarctic ice.", content: ["Scientists","discovered","rare","bacteria","beneath","deep","Antarctic","ice"], jp: "科学者たちは南極の深い氷の下で珍しい細菌を発見した。", wrong: ["探検家たちは北極の厚い氷河の下で古代の化石を発見した。","研究者たちは深海の熱水噴出孔の近くで新種の生物を確認した。","科学者たちは高山地帯の永久凍土から未知のウイルスを採取した。"], words: {Scientists:"科学者たち",discovered:"発見した",rare:"珍しい",bacteria:"細菌",beneath:"〜の下に",deep:"深い",Antarctic:"南極の",ice:"氷"} },
+        { diff: "hard", len: "6-8", en: "Central banks raised interest rates to curb inflation.", content: ["Central","banks","raised","interest","rates","curb","inflation"], jp: "中央銀行はインフレを抑制するために金利を引き上げた。", wrong: ["政府機関は景気を刺激するために大規模な減税を実施した。","中央銀行は通貨安を防ぐために外国為替市場に介入した。","金融機関は企業の資金繰りを支えるため融資基準を緩和した。"], words: {Central:"中央の",banks:"銀行",raised:"引き上げた",interest:"利子・金利",rates:"率",curb:"抑制する",inflation:"インフレ"} },
+
+        // HARD 9-12
+        { diff: "hard", len: "9-12", en: "Ambitious astronomers launched infrared telescopes to observe distant galaxies forming.", content: ["Ambitious","astronomers","launched","infrared","telescopes","observe","distant","galaxies","forming"], jp: "野心的な天文学者たちが遠くの銀河が形成される様子を観測するため赤外線望遠鏡を打ち上げた。", wrong: ["国際宇宙機関が太陽風の活動を監視するため新型の探査機を軌道に投入した。","物理学者たちが暗黒物質の正体を解明するため地下深くに巨大な検出器を建設した。","天文学者たちが地球に接近する小惑星を追跡するため地上の電波望遠鏡を改良した。"], words: {Ambitious:"野心的な",astronomers:"天文学者",launched:"打ち上げた",infrared:"赤外線の",telescopes:"望遠鏡",observe:"観測する",distant:"遠くの",galaxies:"銀河",forming:"形成すること"} },
+        { diff: "hard", len: "9-12", en: "Pharmaceutical researchers must verify clinical efficacy before seeking regulatory approval.", content: ["Pharmaceutical","researchers","verify","clinical","efficacy","seeking","regulatory","approval"], jp: "製薬研究者は規制当局の承認を求める前に臨床的有効性を検証しなければならない。", wrong: ["食品メーカーは新商品を発売する前にアレルギー成分の表示を確認しなければならない。","医療機器メーカーは市場に流通させた後も安全性データの収集を続けなければならない。","臨床医は新しい治療法を導入する前に患者から十分な同意を得なければならない。"], words: {Pharmaceutical:"製薬の",researchers:"研究者",verify:"検証する",clinical:"臨床の",efficacy:"有効性",seeking:"求めること",regulatory:"規制の",approval:"承認"} },
+
+        // HARD 13+
+        { diff: "hard", len: "13+", en: "Contemporary neuroscientists investigate the intricate neural mechanisms underlying human memory consolidation and consciousness.", content: ["Contemporary","neuroscientists","investigate","intricate","neural","mechanisms","underlying","human","memory","consolidation","consciousness"], jp: "現代の神経科学者たちは人間の記憶の定着と意識の根底にある複雑な神経メカニズムを調査している。", wrong: ["心理学者たちは幼少期の言語習得と社会性の発達に影響を与える環境要因を分析している。","人工知能の研究者たちは人間の視覚認識を模倣する深層学習モデルの精度を向上させている。","遺伝学者たちは神経変性疾患の発症リスクを高める特定の遺伝子変異を特定しようとしている。"], words: {Contemporary:"現代の",neuroscientists:"神経科学者",investigate:"調査する",intricate:"複雑な",neural:"神経の",mechanisms:"仕組み",underlying:"根底にある",human:"人間の",memory:"記憶",consolidation:"定着・統合",consciousness:"意識"} },
+
+        // DEMON 3-5
+        { diff: "demon", len: "3-5", en: "Ephemeral phenomena elude rigid taxonomy.", content: ["Ephemeral","phenomena","elude","rigid","taxonomy"], jp: "つかの間の現象は厳格な分類をすり抜ける。", wrong: ["普遍的な法則は複雑な理論を単純化する。","恒常的な変化は従来の予測を裏付ける。","偶発的な誤差は精密な測定を阻害する。"], words: {Ephemeral:"つかの間の",phenomena:"現象",elude:"すり抜ける・逃れる",rigid:"厳格な",taxonomy:"分類法"} },
+        { diff: "demon", len: "3-5", en: "Ostentatious rhetoric obfuscates fiscal insolvency.", content: ["Ostentatious","rhetoric","obfuscates","fiscal","insolvency"], jp: "華美な修辞は財政破綻を覆い隠す。", wrong: ["簡潔な報告は経営再建の道筋を示す。","論理的な議論は予算配分の不備を正す。","慎重な分析は長期的な成長を予測する。"], words: {Ostentatious:"華美な・見せびらかしの",rhetoric:"修辞・美辞麗句",obfuscates:"覆い隠す・曖昧にする",fiscal:"財政の",insolvency:"支払い不能・破綻"} },
+
+        // DEMON 6-8
+        { diff: "demon", len: "6-8", en: "Stringent regulatory frameworks mitigate systemic financial vulnerabilities.", content: ["Stringent","regulatory","frameworks","mitigate","systemic","financial","vulnerabilities"], jp: "厳格な規制の枠組みは金融システム全体の脆弱性を緩和する。", wrong: ["過度な市場介入は国際的な資本移動の効率性を損なう。","柔軟な金融政策は新興国市場の流動性危機を誘発する。","包括的な税制改革は多国籍企業の租税回避を抑制する。"], words: {Stringent:"厳格な",regulatory:"規制の",frameworks:"枠組み",mitigate:"緩和する",systemic:"全体の",financial:"金融の",vulnerabilities:"脆弱性"} },
+        { diff: "demon", len: "6-8", en: "Ubiquitous algorithms inadvertently perpetuate latent societal prejudices.", content: ["Ubiquitous","algorithms","inadvertently","perpetuate","latent","societal","prejudices"], jp: "至る所に存在するアルゴリズムは知らず知らずのうちに潜在的な社会的偏見を永続させる。", wrong: ["最新の暗号技術は分散型ネットワークの匿名性を恒久的に保証する。","高度な予測モデルは消費者の購買行動の微妙な変化を正確に捉える。","自律的な監視システムは公共空間における違法行為を未然に抑止する。"], words: {Ubiquitous:"至る所にある",algorithms:"アルゴリズム",inadvertently:"知らずに・うっかり",perpetuate:"永続させる",latent:"潜在的な",societal:"社会の",prejudices:"偏見"} },
+
+        // DEMON 9-12
+        { diff: "demon", len: "9-12", en: "Ambivalent diplomats crafted an equivocal treaty to avert imminent geopolitical escalation.", content: ["Ambivalent","diplomats","crafted","equivocal","treaty","avert","imminent","geopolitical","escalation"], jp: "相反する思惑を抱えた外交官たちは差し迫った地政学的激化を回避するため玉虫色の条約を作り上げた。", wrong: ["強硬派の指導者たちは領土問題の最終決着を図るため一方的な経済封鎖を断行した。","国際機関の調停団は長期化する内戦を終結させるため拘束力のある停戦協定を締結した。","各国の代表団は通商摩擦の拡大を防ぐため関税の段階的引き下げに関する合意に達した。"], words: {Ambivalent:"相反する感情の",diplomats:"外交官",crafted:"作り上げた",equivocal:"曖昧な・玉虫色の",treaty:"条約",avert:"回避する",imminent:"差し迫った",geopolitical:"地政学的な",escalation:"激化"} },
+
+        // DEMON 13+
+        { diff: "demon", len: "13+", en: "Bioluminescent organisms inhabiting abyssal trenches exhibit extraordinary physiological adaptations that defy conventional evolutionary paradigms.", content: ["Bioluminescent","organisms","inhabiting","abyssal","trenches","exhibit","extraordinary","physiological","adaptations","defy","conventional","evolutionary","paradigms"], jp: "深海海溝に生息する生物発光生物は、従来の進化論的パラダイムを覆す並外れた生理学的適応を示す。", wrong: ["熱帯雨林の樹冠に生息する希少な昆虫類は、気候変動に伴う急速な環境変化に対して極めて脆弱である。","極地の氷床下に閉じ込められた古代の微生物は、過酷な低温環境でも代謝を維持する特殊な酵素を持つ。","浅瀬のサンゴ礁に共生する多様な海洋生物は、海水温の上昇によって白化現象と個体数の激減に直面している。"], words: {Bioluminescent:"生物発光の",organisms:"生物",inhabiting:"生息する",abyssal:"深海の",trenches:"海溝",exhibit:"示す",extraordinary:"並外れた",physiological:"生理学的な",adaptations:"適応",defy:"覆す・逆らう",conventional:"従来の",evolutionary:"進化の",paradigms:"パラダイム・枠組み"} }
+      ];
+
+      // App State
+      const state = {
+        diff: "easy",
+        len: "3-5",
+        extraSeconds: 0,
+        mode: "study", // "study" | "ta"
+        questions: [],
+        currentIndex: 0,
+        score: 0,
+        tappedThisSession: [],
+        isPaused: false,
+        timerId: null,
+        timeLimitMs: 5000,
+        remainingMs: 5000,
+        lastTick: 0,
+        sessionStartTime: 0,
+        totalElapsedMs: 0,
+        lastAnswerCorrect: false,
+        lastUserChoice: "",
+        vocab: [],
+        savedSentences: [],
+        retryQueue: [],
+        seenHistory: [],
+        bestTaTimes: {}
+      };
+
+      function loadStorage() {
+        try {
+          state.vocab = JSON.parse(localStorage.getItem(STORAGE_KEYS.VOCAB) || "[]");
+          state.savedSentences = JSON.parse(localStorage.getItem(STORAGE_KEYS.SAVED) || "[]");
+          state.retryQueue = JSON.parse(localStorage.getItem(STORAGE_KEYS.RETRY) || "[]");
+          state.seenHistory = JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY) || "[]");
+          state.bestTaTimes = JSON.parse(localStorage.getItem(STORAGE_KEYS.BEST_TA) || "{}");
+        } catch (e) {
+          state.vocab = [];
+          state.savedSentences = [];
+          state.retryQueue = [];
+          state.seenHistory = [];
+          state.bestTaTimes = {};
+        }
+      }
+
+      function saveStorage() {
+        try {
+          localStorage.setItem(STORAGE_KEYS.VOCAB, JSON.stringify(state.vocab));
+          localStorage.setItem(STORAGE_KEYS.SAVED, JSON.stringify(state.savedSentences));
+          localStorage.setItem(STORAGE_KEYS.RETRY, JSON.stringify(state.retryQueue));
+          localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(state.seenHistory.slice(-60)));
+          localStorage.setItem(STORAGE_KEYS.BEST_TA, JSON.stringify(state.bestTaTimes));
+        } catch (e) {}
+        updateBadges();
+      }
+
+      function updateBadges() {
+        document.getElementById("vocabCountBadge").textContent = state.vocab.length;
+        document.getElementById("savedCountBadge").textContent = state.savedSentences.length;
+
+        const retryBanner = document.getElementById("homeRetryBanner");
+        if (state.retryQueue.length > 0) {
+          retryBanner.textContent = "🔥 前回間違えた英文（" + state.retryQueue.length + "文）が優先的に出題されます！正解するとクリアになります。";
+          retryBanner.classList.remove("hidden");
+        } else {
+          retryBanner.classList.add("hidden");
+        }
+
+        const vocabBanner = document.getElementById("homeVocabBanner");
+        if (state.vocab.length > 0) {
+          vocabBanner.textContent = "📚 マイ単語帳の単語（" + state.vocab.length + "語）を含む英文を優先出題中";
+          vocabBanner.classList.remove("hidden");
+        } else {
+          vocabBanner.classList.add("hidden");
+        }
+      }
+
+      function setTheme(themeClass) {
+        document.body.className = themeClass;
+      }
+
+      function showOnlyView(viewId) {
+        const views = ["viewHome", "viewReady", "viewPlay", "viewQuitConfirm", "viewFeedback", "viewResult", "viewVocab", "viewSaved"];
+        views.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) {
+            if (id === viewId) el.classList.remove("hidden");
+            else el.classList.add("hidden");
+          }
+        });
+        const header = document.getElementById("mainHeader");
+        if (viewId === "viewPlay" || viewId === "viewReady" || viewId === "viewQuitConfirm") {
+          header.classList.add("hidden");
+        } else {
+          header.classList.remove("hidden");
+        }
+      }
+
+      function cleanWord(raw) {
+        return raw.replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, "");
+      }
+
+      function lookupWordMeaning(word, questionObj) {
+        const clean = cleanWord(word);
+        const lower = clean.toLowerCase();
+        if (questionObj && questionObj.words) {
+          for (const k of Object.keys(questionObj.words)) {
+            if (k.toLowerCase() === lower) return questionObj.words[k];
+          }
+        }
+        if (BUILTIN_DICTIONARY[lower]) return BUILTIN_DICTIONARY[lower];
+        const existing = state.vocab.find(v => v.word.toLowerCase() === lower);
+        if (existing) return existing.meaning;
+        return "（文脈から意味を推測する内容語）";
+      }
+
+      function saveWordToVocab(rawWord, sentence, questionObj) {
+        const clean = cleanWord(rawWord);
+        if (!clean) return null;
+        const meaning = lookupWordMeaning(clean, questionObj);
+        const lower = clean.toLowerCase();
+
+        const idx = state.vocab.findIndex(v => v.word.toLowerCase() === lower);
+        if (idx >= 0) {
+          state.vocab[idx].sentence = sentence;
+        } else {
+          state.vocab.unshift({
+            word: clean,
+            meaning: meaning,
+            sentence: sentence,
+            addedAt: Date.now()
+          });
+        }
+
+        if (!state.tappedThisSession.some(w => w.word.toLowerCase() === lower)) {
+          state.tappedThisSession.push({ word: clean, meaning: meaning });
+        }
+        saveStorage();
+        return { word: clean, meaning: meaning };
+      }
+
+      function saveSentenceItem(q) {
+        if (!q || !q.en) return;
+        const exists = state.savedSentences.some(s => s.en === q.en);
+        if (!exists) {
+          state.savedSentences.unshift({
+            en: q.en,
+            jp: q.jp,
+            content: q.content || [],
+            words: q.words || {},
+            savedAt: Date.now()
+          });
+          saveStorage();
+        }
+      }
+
+      function addToRetryQueue(q) {
+        if (!q || !q.en) return;
+        if (!state.retryQueue.some(item => item.en === q.en)) {
+          state.retryQueue.push({
+            en: q.en,
+            jp: q.jp,
+            wrong: q.wrong,
+            content: q.content || [],
+            words: q.words || {},
+            isRetry: true
+          });
+          saveStorage();
+        }
+      }
+
+      function removeFromRetryQueue(en) {
+        const before = state.retryQueue.length;
+        state.retryQueue = state.retryQueue.filter(item => item.en !== en);
+        if (state.retryQueue.length !== before) saveStorage();
+      }
+
+      function shuffle(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      // Dynamic Japanese Choice Reading Time + Native Reading Speed + User Buffer
+      function computeTimeLimitMs(q) {
+        const wordCount = q.en.split(/\s+/).length;
+        // Native speed (~250 wpm => ~0.24s/word) + cognitive processing base 1.8s
+        const nativeReadSec = 1.8 + wordCount * 0.26;
+        // Japanese 4 choices reading & comparison time (~14 chars/sec + comparison buffer)
+        const totalJpChars = q.options.reduce((sum, opt) => sum + opt.length, 0);
+        const jpChoiceReadSec = 1.6 + totalJpChars * 0.085;
+        const extraSec = state.mode === "study" ? state.extraSeconds : 0;
+        return Math.round((nativeReadSec + jpChoiceReadSec + extraSec) * 1000);
+      }
+
+      function buildQuestionSession() {
+        const list = [];
+        const usedEn = new Set();
+
+        // 1. Prioritize missed sentences from retryQueue
+        for (const rq of state.retryQueue) {
+          if (list.length >= 10) break;
+          if (!usedEn.has(rq.en)) {
+            usedEn.add(rq.en);
+            list.push({ ...rq, isRetry: true });
+          }
+        }
+
+        // 2. Filter matching diff & len, avoiding recent history, prioritizing vocab words
+        const vocabSet = new Set(state.vocab.map(v => v.word.toLowerCase()));
+        const recentSet = new Set(state.seenHistory.slice(-30));
+
+        let candidates = QUESTION_BANK.filter(item => item.diff === state.diff && item.len === state.len && !usedEn.has(item.en));
+        if (candidates.length < 10) {
+          const sameDiff = QUESTION_BANK.filter(item => item.diff === state.diff && !usedEn.has(item.en));
+          candidates = candidates.concat(shuffle(sameDiff));
+        }
+        if (candidates.length < 10) {
+          const rest = QUESTION_BANK.filter(item => !usedEn.has(item.en));
+          candidates = candidates.concat(shuffle(rest));
+        }
+
+        // Score candidates: unseen > seen, contains vocab word > no vocab word
+        candidates = shuffle(candidates).sort((a, b) => {
+          const aRecent = recentSet.has(a.en) ? 1 : 0;
+          const bRecent = recentSet.has(b.en) ? 1 : 0;
+          if (aRecent !== bRecent) return aRecent - bRecent;
+
+          const aVocabHit = a.en.toLowerCase().split(/\W+/).some(w => vocabSet.has(w)) ? 0 : 1;
+          const bVocabHit = b.en.toLowerCase().split(/\W+/).some(w => vocabSet.has(w)) ? 0 : 1;
+          return aVocabHit - bVocabHit;
+        });
+
+        for (const item of candidates) {
+          if (list.length >= 10) break;
+          if (!usedEn.has(item.en)) {
+            usedEn.add(item.en);
+            list.push({ ...item, isRetry: false });
+          }
+        }
+
+        // Prepare shuffled 4 options for each question
+        return list.slice(0, 10).map(q => {
+          const options = shuffle([q.jp, ...(q.wrong || []).slice(0, 3)]);
+          return { ...q, options };
+        });
+      }
+
+      function renderSentenceTokens(container, q, highlightContentWords, toastEl) {
+        container.innerHTML = "";
+        const contentSet = new Set((q.content || []).map(w => cleanWord(w).toLowerCase()));
+        const tokens = q.en.split(/\s+/);
+
+        tokens.forEach(tok => {
+          const span = document.createElement("span");
+          span.className = "word-token";
+          span.textContent = tok;
+
+          const cleaned = cleanWord(tok).toLowerCase();
+          const isContent = contentSet.has(cleaned) || (cleaned.length > 2 && !STOP_WORDS.has(cleaned) && contentSet.size === 0);
+
+          if (highlightContentWords && isContent) {
+            span.classList.add("content-word");
+          }
+
+          span.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const saved = saveWordToVocab(tok, q.en, q);
+            if (saved && toastEl) {
+              toastEl.innerHTML = "<span>📖 <strong>" + saved.word + "</strong> : " + saved.meaning + "</span><span style='font-size:0.74rem; color:#15803d;'>単語帳に保存済</span>";
+              toastEl.classList.remove("hidden");
+            }
+          });
+
+          container.appendChild(span);
+          container.appendChild(document.createTextNode(" "));
+        });
+      }
+
+      function startCountdownThenPlay() {
+        setTheme("theme-ready");
+        showOnlyView("viewReady");
+        const label = document.getElementById("readyLabel");
+        const steps = ["Are you ready?", "3", "2", "1", "Go!"];
+        let idx = 0;
+        label.textContent = steps[0];
+
+        const stepInterval = setInterval(() => {
+          idx++;
+          if (idx < steps.length) {
+            label.style.animation = "none";
+            void label.offsetWidth;
+            label.style.animation = "popIn 0.28s ease";
+            label.textContent = steps[idx];
+          } else {
+            clearInterval(stepInterval);
+            state.sessionStartTime = performance.now();
+            state.totalElapsedMs = 0;
+            loadQuestion(0);
+          }
+        }, 720);
+      }
+
+      function startTimer() {
+        stopTimer();
+        state.lastTick = performance.now();
+        state.timerId = setInterval(() => {
+          if (state.isPaused) {
+            state.lastTick = performance.now();
+            return;
+          }
+          const now = performance.now();
+          const dt = now - state.lastTick;
+          state.lastTick = now;
+          state.remainingMs -= dt;
+          state.totalElapsedMs += dt;
+
+          if (state.remainingMs <= 0) {
+            state.remainingMs = 0;
+            updateTimerUI();
+            stopTimer();
+            handleAnswer(null, true);
+          } else {
+            updateTimerUI();
+          }
+        }, 50);
+      }
+
+      function stopTimer() {
+        if (state.timerId) {
+          clearInterval(state.timerId);
+          state.timerId = null;
+        }
+      }
+
+      function updateTimerUI() {
+        const ratio = Math.max(0, Math.min(1, state.remainingMs / state.timeLimitMs));
+        const fill = document.getElementById("timerFill");
+        fill.style.width = (ratio * 100).toFixed(1) + "%";
+        if (ratio < 0.28) fill.classList.add("danger");
+        else fill.classList.remove("danger");
+
+        document.getElementById("timerDetailText").textContent = "残り " + (state.remainingMs / 1000).toFixed(1) + " 秒";
+      }
+
+      function loadQuestion(index) {
+        state.currentIndex = index;
+        state.isPaused = false;
+        const q = state.questions[index];
+
+        // Record in seen history
+        if (!state.seenHistory.includes(q.en)) {
+          state.seenHistory.push(q.en);
+          saveStorage();
+        }
+
+        setTheme("theme-play");
+        showOnlyView("viewPlay");
+
+        document.getElementById("playProgressText").textContent = "第 " + (index + 1) + " / " + state.questions.length + " 問";
+        document.getElementById("playModeBadge").textContent = state.mode === "study" ? "📘 学習" : "⏱️ TA";
+
+        const retryBadge = document.getElementById("retryBadge");
+        if (q.isRetry) retryBadge.classList.remove("hidden");
+        else retryBadge.classList.add("hidden");
+
+        const toast = document.getElementById("playWordToast");
+        toast.classList.add("hidden");
+        renderSentenceTokens(document.getElementById("playSentenceBox"), q, false, toast);
+
+        const optContainer = document.getElementById("optionsContainer");
+        optContainer.innerHTML = "";
+        const labels = ["A", "B", "C", "D"];
+        q.options.forEach((optText, i) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "option-btn";
+          btn.innerHTML = '<span class="option-index">' + labels[i] + '</span><span>' + optText + '</span>';
+          btn.addEventListener("click", () => {
+            stopTimer();
+            handleAnswer(optText, false);
+          });
+          optContainer.appendChild(btn);
+        });
+
+        state.timeLimitMs = computeTimeLimitMs(q);
+        state.remainingMs = state.timeLimitMs;
+        updateTimerUI();
+        startTimer();
+      }
+
+      function handleAnswer(selectedOption, isTimeout) {
+        const q = state.questions[state.currentIndex];
+        const isCorrect = !isTimeout && selectedOption === q.jp;
+        state.lastAnswerCorrect = isCorrect;
+        state.lastUserChoice = isTimeout ? "時間切れ" : selectedOption;
+
+        if (isCorrect) {
+          state.score++;
+          if (q.isRetry) {
+            removeFromRetryQueue(q.en);
+          }
+          setTheme("theme-correct");
+        } else {
+          addToRetryQueue(q);
+          saveSentenceItem(q);
+          setTheme("theme-wrong");
+        }
+
+        showOnlyView("viewFeedback");
+
+        const banner = document.getElementById("feedbackBanner");
+        const title = document.getElementById("feedbackTitle");
+        const subBadge = document.getElementById("feedbackSubBadge");
+        const userNote = document.getElementById("feedbackUserChoiceNote");
+
+        if (isCorrect) {
+          banner.className = "feedback-banner ok";
+          title.textContent = "⭕ 正解！";
+          subBadge.textContent = q.isRetry ? "✨ 苦手克服クリア！" : "ナイス速読！";
+          userNote.textContent = "";
+        } else {
+          banner.className = "feedback-banner ng";
+          title.textContent = isTimeout ? "⏰ 時間切れ…" : "❌ 不正解…";
+          subBadge.textContent = "復習リスト＆保存英文に追加";
+          userNote.textContent = "あなたの回答: " + state.lastUserChoice;
+        }
+
+        const fbToast = document.getElementById("feedbackWordToast");
+        fbToast.classList.add("hidden");
+        renderSentenceTokens(document.getElementById("feedbackSentenceBox"), q, true, fbToast);
+        document.getElementById("feedbackCorrectJp").textContent = q.jp;
+
+        const saveBtn = document.getElementById("manualSaveSentenceBtn");
+        const alreadySaved = state.savedSentences.some(s => s.en === q.en);
+        saveBtn.textContent = alreadySaved ? "✅ 保存した英文に登録済み" : "⭐ この英文を保存する";
+
+        const nextBtn = document.getElementById("nextQuestionBtn");
+        if (state.mode === "ta" && !isCorrect) {
+          nextBtn.textContent = "結果を見る（途中終了） →";
+        } else if (state.currentIndex + 1 >= state.questions.length) {
+          nextBtn.textContent = "結果発表へ →";
+        } else {
+          nextBtn.textContent = "次の問題へ（第 " + (state.currentIndex + 2) + " 問） →";
+        }
+      }
+
+      function showResultScreen() {
+        const total = state.questions.length;
+        const grid = document.getElementById("resultStatsGrid");
+        const heading = document.getElementById("resultHeading");
+        const subText = document.getElementById("resultSubText");
+
+        if (state.mode === "study") {
+          setTheme("theme-result-study");
+          heading.textContent = "📘 学習モード 結果";
+          const rate = Math.round((state.score / total) * 100);
+          subText.textContent = "10問お疲れさまでした！間違えた英文は次回もリベンジ出題されます。";
+          grid.innerHTML =
+            '<div class="stat-box"><div class="stat-num">' + rate + '%</div><div class="stat-label">正答率（' + state.score + '/' + total + '問）</div></div>' +
+            '<div class="stat-box"><div class="stat-num">' + state.tappedThisSession.length + '語</div><div class="stat-label">今回調べた単語</div></div>';
+        } else {
+          const clearedAll = state.score === total;
+          if (clearedAll) {
+            setTheme("theme-result-ta-win");
+            heading.textContent = "🏆 タイムアタック完全制覇！";
+            const sec = (state.totalElapsedMs / 1000).toFixed(2);
+            const totalWords = state.questions.reduce((acc, q) => acc + q.en.split(/\s+/).length, 0);
+            const nativeTargetSec = (totalWords * 0.25 + total * 1.4).toFixed(1);
+            const key = state.diff + "_" + state.len;
+            const prevBest = state.bestTaTimes[key];
+            if (!prevBest || parseFloat(sec) < prevBest) {
+              state.bestTaTimes[key] = parseFloat(sec);
+              saveStorage();
+            }
+            const bestDisplay = state.bestTaTimes[key].toFixed(2) + "秒";
+            subText.textContent = "10問連続ノーミス達成！ネイティブ基準タイム（約" + nativeTargetSec + "秒）と競おう！";
+            grid.innerHTML =
+              '<div class="stat-box"><div class="stat-num">' + sec + '秒</div><div class="stat-label">今回のクリアタイム</div></div>' +
+              '<div class="stat-box"><div class="stat-num">' + bestDisplay + '</div><div class="stat-label">自己ベスト（' + state.diff + '）</div></div>';
+          } else {
+            setTheme("theme-result-ta-lose");
+            heading.textContent = "💀 タイムアタック途中終了";
+            subText.textContent = "第 " + (state.currentIndex + 1) + " 問目でミスが発生しました。全問連続正解を目指そう！";
+            grid.innerHTML =
+              '<div class="stat-box"><div class="stat-num">' + state.score + ' / ' + total + '</div><div class="stat-label">連続正解数</div></div>' +
+              '<div class="stat-box"><div class="stat-num">' + (state.totalElapsedMs / 1000).toFixed(1) + '秒</div><div class="stat-label">生存タイム</div></div>';
+          }
+        }
+
+        const tappedWrap = document.getElementById("resultTappedWrap");
+        const tappedList = document.getElementById("resultTappedList");
+        if (state.tappedThisSession.length > 0) {
+          tappedWrap.classList.remove("hidden");
+          tappedList.innerHTML = state.tappedThisSession.map(w =>
+            '<div class="list-item-card" style="padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">' +
+            '<strong>' + w.word + '</strong><span style="color:#475569; font-size:0.88rem;">' + w.meaning + '</span></div>'
+          ).join("");
+        } else {
+          tappedWrap.classList.add("hidden");
+        }
+
+        showOnlyView("viewResult");
+      }
+
+      function renderVocabPage() {
+        const container = document.getElementById("vocabListContainer");
+        if (state.vocab.length === 0) {
+          container.innerHTML = '<p style="text-align:center; color:#64748b; padding:24px 0;">まだ保存された単語はありません。<br>プレイ中に分からない英単語をタップすると自動で追加されます。</p>';
+          return;
+        }
+        container.innerHTML = "";
+        state.vocab.forEach((item, idx) => {
+          const card = document.createElement("div");
+          card.className = "list-item-card";
+          card.innerHTML =
+            '<div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">' +
+            '<div><strong style="font-size:1.08rem; color:#4f46e5;">' + item.word + '</strong> <span style="font-weight:700; color:#0f172a; margin-left:6px;">' + item.meaning + '</span></div>' +
+            '<button type="button" class="delete-mini-btn">覚えた(削除)</button>' +
+            '</div>' +
+            '<div style="font-size:0.82rem; color:#475569; margin-top:6px; background:#f8fafc; padding:6px 10px; border-radius:8px;">' + item.sentence + '</div>';
+
+          card.querySelector(".delete-mini-btn").addEventListener("click", () => {
+            state.vocab.splice(idx, 1);
+            saveStorage();
+            renderVocabPage();
+          });
+          container.appendChild(card);
+        });
+      }
+
+      function renderSavedSentencesPage() {
+        const container = document.getElementById("savedListContainer");
+        if (state.savedSentences.length === 0) {
+          container.innerHTML = '<p style="text-align:center; color:#64748b; padding:24px 0;">保存された英文はまだありません。<br>間違えた英文や、解説画面で「保存する」を押した英文がここに並びます。</p>';
+          return;
+        }
+        container.innerHTML = "";
+        state.savedSentences.forEach((item, idx) => {
+          const card = document.createElement("div");
+          card.className = "list-item-card";
+
+          const contentSet = new Set((item.content || []).map(w => cleanWord(w).toLowerCase()));
+          const highlightedHtml = item.en.split(/\s+/).map(tok => {
+            const c = cleanWord(tok).toLowerCase();
+            if (contentSet.has(c)) {
+              return '<span style="color:#dc2626; background:#fee2e2; padding:1px 4px; border-radius:6px; font-weight:800;">' + tok + '</span>';
+            }
+            return tok;
+          }).join(" ");
+
+          card.innerHTML =
+            '<div style="font-size:1.02rem; font-weight:800; line-height:1.6; color:#0f172a;">' + highlightedHtml + '</div>' +
+            '<div style="font-size:0.88rem; font-weight:700; color:#475569; margin:8px 0;">' + item.jp + '</div>' +
+            '<div style="text-align:right;"><button type="button" class="delete-mini-btn">削除</button></div>';
+
+          card.querySelector(".delete-mini-btn").addEventListener("click", () => {
+            state.savedSentences.splice(idx, 1);
+            saveStorage();
+            renderSavedSentencesPage();
+          });
+          container.appendChild(card);
+        });
+      }
+
+      function startGame(mode) {
+        state.mode = mode;
+        state.score = 0;
+        state.tappedThisSession = [];
+        state.questions = buildQuestionSession();
+        startCountdownThenPlay();
+      }
+
+      function goHome() {
+        stopTimer();
+        state.isPaused = false;
+        setTheme("theme-home");
+        updateBadges();
+        showOnlyView("viewHome");
+      }
+
+      function initApp() {
+        loadStorage();
+        updateBadges();
+
+        // Difficulty selection
+        document.querySelectorAll("#diffGroup .choice-chip").forEach(btn => {
+          btn.addEventListener("click", () => {
+            document.querySelectorAll("#diffGroup .choice-chip").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            state.diff = btn.getAttribute("data-diff");
+          });
+        });
+
+        // Length selection
+        document.querySelectorAll("#lenGroup .choice-chip").forEach(btn => {
+          btn.addEventListener("click", () => {
+            document.querySelectorAll("#lenGroup .choice-chip").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            state.len = btn.getAttribute("data-len");
+          });
+        });
+
+        // Extra time (+0s to +10s)
+        const extraDisplay = document.getElementById("extraTimeDisplay");
+        document.getElementById("timeMinusBtn").addEventListener("click", () => {
+          if (state.extraSeconds > 0) {
+            state.extraSeconds--;
+            extraDisplay.textContent = "+" + state.extraSeconds + "秒";
+          }
+        });
+        document.getElementById("timePlusBtn").addEventListener("click", () => {
+          if (state.extraSeconds < 10) {
+            state.extraSeconds++;
+            extraDisplay.textContent = "+" + state.extraSeconds + "秒";
+          }
+        });
+
+        // Mode start buttons
+        document.getElementById("startStudyBtn").addEventListener("click", () => startGame("study"));
+        document.getElementById("startTaBtn").addEventListener("click", () => startGame("ta"));
+
+        // Pause / Quit in-game (hides active question completely)
+        document.getElementById("pauseQuitBtn").addEventListener("click", () => {
+          state.isPaused = true;
+          setTheme("theme-home");
+          showOnlyView("viewQuitConfirm");
+        });
+
+        document.getElementById("confirmQuitRedBtn").addEventListener("click", () => {
+          goHome();
+        });
+
+        document.getElementById("cancelQuitBlueBtn").addEventListener("click", () => {
+          state.isPaused = false;
+          setTheme("theme-play");
+          showOnlyView("viewPlay");
+        });
+
+        // Feedback next & manual save
+        document.getElementById("manualSaveSentenceBtn").addEventListener("click", () => {
+          const q = state.questions[state.currentIndex];
+          saveSentenceItem(q);
+          document.getElementById("manualSaveSentenceBtn").textContent = "✅ 保存した英文に登録済み";
+        });
+
+        document.getElementById("nextQuestionBtn").addEventListener("click", () => {
+          if (state.mode === "ta" && !state.lastAnswerCorrect) {
+            showResultScreen();
+            return;
+          }
+          if (state.currentIndex + 1 >= state.questions.length) {
+            showResultScreen();
+          } else {
+            loadQuestion(state.currentIndex + 1);
+          }
+        });
+
+        // Result navigation
+        document.getElementById("playAgainBtn").addEventListener("click", () => startGame(state.mode));
+        document.getElementById("backHomeFromResultBtn").addEventListener("click", goHome);
+
+        // Header navigation
+        document.getElementById("logoHomeBtn").addEventListener("click", goHome);
+        document.getElementById("openVocabBtn").addEventListener("click", () => {
+          stopTimer();
+          setTheme("theme-home");
+          renderVocabPage();
+          showOnlyView("viewVocab");
+        });
+        document.getElementById("closeVocabBtn").addEventListener("click", goHome);
+
+        document.getElementById("openSavedBtn").addEventListener("click", () => {
+          stopTimer();
+          setTheme("theme-home");
+          renderSavedSentencesPage();
+          showOnlyView("viewSaved");
+        });
+        document.getElementById("closeSavedBtn").addEventListener("click", goHome);
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initApp);
+      } else {
+        initApp();
+      }
+    })();
+  </script>
+</body>
+</html>
