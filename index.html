@@ -4,1615 +4,761 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <title>意味単語速読マスター</title>
   <style>
-    :root {
-      --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #f1f5f9 100%);
-      --card-bg: #ffffff;
-      --text-main: #0f172a;
-      --text-sub: #475569;
-      --text-muted: #64748b;
-      --border-color: #e2e8f0;
-      --accent: #4f46e5;
-      --accent-dark: #4338ca;
-      --accent-soft: #eef2ff;
-      --danger: #e11d48;
-      --danger-soft: #fff1f2;
-      --success: #059669;
-      --success-soft: #ecfdf5;
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
-      background: var(--bg-gradient);
-      color: var(--text-main);
-      transition: background 0.3s ease;
-    }
-
-    body.theme-home { background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #f1f5f9 100%); }
-    body.theme-ready { background: linear-gradient(135deg, #fefce8 0%, #fef08a 50%, #fde047 100%); }
-    body.theme-play { background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #eef2ff 100%); }
-    body.theme-correct { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #e0f2fe 100%); }
-    body.theme-wrong { background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 50%, #fee2e2 100%); }
-    body.theme-result-study { background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 50%, #fae8ff 100%); }
-    body.theme-result-ta-win { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #ccfbf1 100%); }
-    body.theme-result-ta-lose { background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 50%, #cbd5e1 100%); }
-
-    .hidden {
-      display: none !important;
-      pointer-events: none !important;
-    }
-
-    button {
-      font-family: inherit;
-      cursor: pointer;
-      touch-action: manipulation;
-      border: none;
-      outline: none;
-      transition: transform 0.1s ease, background-color 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    button:active {
-      transform: scale(0.97);
-    }
-
-    .app-shell {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 12px 16px 36px;
-    }
-
-    /* Header */
-    .top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 8px 0 14px;
-    }
-
-    .brand-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: transparent;
-      padding: 6px 4px;
-      font-weight: 800;
-      font-size: 1.05rem;
-      color: var(--text-main);
-    }
-
-    .brand-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      background: var(--accent);
-      color: #fff;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      box-shadow: 0 3px 8px rgba(79, 70, 229, 0.28);
-    }
-
-    .nav-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .nav-pill {
-      min-height: 44px;
-      padding: 8px 12px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid var(--border-color);
-      color: var(--text-main);
-      font-weight: 700;
-      font-size: 0.82rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
-    }
-
-    .badge-count {
-      background: var(--accent-soft);
-      color: var(--accent);
-      padding: 2px 7px;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      font-weight: 800;
-    }
-
-    /* Card */
-    .card {
-      background: rgba(255, 255, 255, 0.96);
-      border: 1px solid rgba(226, 232, 240, 0.9);
-      border-radius: 22px;
-      padding: 20px;
-      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.07);
-      margin-bottom: 14px;
-    }
-
-    .hero-title {
-      font-size: 1.45rem;
-      font-weight: 900;
-      margin: 0 0 6px;
-      letter-spacing: -0.02em;
-    }
-
-    .hero-sub {
-      font-size: 0.88rem;
-      color: var(--text-sub);
-      margin: 0;
-      line-height: 1.5;
-    }
-
-    .section-label {
-      font-size: 0.85rem;
-      font-weight: 800;
-      color: var(--text-sub);
-      margin: 0 0 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-
-    .choice-chip {
-      min-height: 54px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: #f8fafc;
-      border: 2px solid #e2e8f0;
-      color: var(--text-main);
-      font-weight: 800;
-      font-size: 0.95rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 2px;
-    }
-
-    .choice-chip small {
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    .choice-chip.active {
-      background: var(--accent-soft);
-      border-color: var(--accent);
-      color: var(--accent-dark);
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.16);
-    }
-
-    .choice-chip.active small {
-      color: var(--accent);
-    }
-
-    /* Extra Time Stepper */
-    .time-control-box {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 10px 14px;
-      gap: 10px;
-    }
-
-    .stepper-btns {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .step-btn {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      background: #ffffff;
-      border: 2px solid #cbd5e1;
-      font-size: 1.35rem;
-      font-weight: 900;
-      color: var(--text-main);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .extra-time-val {
-      min-width: 64px;
-      text-align: center;
-      font-size: 1.15rem;
-      font-weight: 900;
-      color: var(--accent);
-    }
-
-    /* Mode Start Buttons */
-    .mode-btn {
-      width: 100%;
-      min-height: 68px;
-      padding: 14px 18px;
-      border-radius: 18px;
-      color: #ffffff;
-      font-weight: 900;
-      font-size: 1.05rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      text-align: left;
-      margin-bottom: 10px;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
-    }
-
-    .mode-btn.study {
-      background: linear-gradient(135deg, #2563eb, #4f46e5);
-    }
-
-    .mode-btn.ta {
-      background: linear-gradient(135deg, #059669, #0d9488);
-    }
-
-    .mode-btn span.sub {
-      display: block;
-      font-size: 0.78rem;
-      font-weight: 600;
-      opacity: 0.92;
-      margin-top: 3px;
-    }
-
-    .status-banner {
-      background: #eef2ff;
-      border: 1px solid #c7d2fe;
-      color: #3730a3;
-      border-radius: 14px;
-      padding: 10px 14px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      margin-bottom: 12px;
-      line-height: 1.45;
-    }
-
-    .status-banner.retry {
-      background: #fff1f2;
-      border-color: #fecdd3;
-      color: #be123c;
-    }
-
-    /* Ready Countdown */
-    .ready-box {
-      min-height: 68vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 24px;
-    }
-
-    .ready-text {
-      font-size: 3rem;
-      font-weight: 900;
-      color: #854d0e;
-      letter-spacing: -0.02em;
-      animation: popIn 0.28s ease;
-    }
-
-    @keyframes popIn {
-      0% { transform: scale(0.75); opacity: 0.3; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    /* Play Header & Quit Button */
-    .play-top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .quit-btn {
-      min-height: 46px;
-      min-width: 82px;
-      padding: 8px 14px;
-      border-radius: 14px;
-      background: #ffffff;
-      border: 2px solid #cbd5e1;
-      color: #334155;
-      font-weight: 800;
-      font-size: 0.9rem;
-    }
-
-    .progress-pill {
-      background: #ffffff;
-      border: 1px solid #cbd5e1;
-      padding: 8px 14px;
-      border-radius: 999px;
-      font-weight: 800;
-      font-size: 0.88rem;
-      color: var(--text-main);
-    }
-
-    /* Timer Bar */
-    .timer-wrap {
-      background: #e2e8f0;
-      height: 12px;
-      border-radius: 999px;
-      overflow: hidden;
-      margin-bottom: 6px;
-    }
-
-    .timer-fill {
-      height: 100%;
-      width: 100%;
-      background: linear-gradient(90deg, #3b82f6, #10b981);
-      transition: width 0.08s linear;
-    }
-
-    .timer-fill.danger {
-      background: linear-gradient(90deg, #ef4444, #f97316);
-    }
-
-    .timer-meta {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--text-sub);
-      margin-bottom: 12px;
-    }
-
-    /* Sentence Area & Tappable Words */
-    .sentence-box {
-      font-size: 1.38rem;
-      line-height: 1.75;
-      font-weight: 800;
-      color: #0f172a;
-      word-spacing: 2px;
-      margin: 6px 0 10px;
-    }
-
-    .word-token {
-      display: inline-block;
-      padding: 2px 5px;
-      margin: 2px 1px;
-      border-radius: 8px;
-      cursor: pointer;
-      border-bottom: 2px dashed #cbd5e1;
-      transition: background 0.15s ease;
-    }
-
-    .word-token:active {
-      background: #fef08a;
-    }
-
-    .word-token.content-word {
-      color: #dc2626;
-      background: #fee2e2;
-      border-bottom-color: #f87171;
-    }
-
-    .word-hint-toast {
-      min-height: 42px;
-      background: #fefce8;
-      border: 1px solid #fde047;
-      color: #713f12;
-      border-radius: 12px;
-      padding: 8px 12px;
-      font-size: 0.88rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    /* Option Buttons */
-    .option-btn {
-      width: 100%;
-      min-height: 60px;
-      padding: 14px 16px;
-      border-radius: 16px;
-      background: #ffffff;
-      border: 2px solid #cbd5e1;
-      color: var(--text-main);
-      font-size: 0.98rem;
-      font-weight: 700;
-      line-height: 1.45;
-      text-align: left;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
-    }
-
-    .option-index {
-      width: 30px;
-      height: 30px;
-      border-radius: 10px;
-      background: #f1f5f9;
-      color: #475569;
-      font-weight: 900;
-      font-size: 0.85rem;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    /* Feedback View */
-    .feedback-banner {
-      padding: 14px 16px;
-      border-radius: 16px;
-      font-weight: 900;
-      font-size: 1.15rem;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .feedback-banner.ok {
-      background: #dbeafe;
-      color: #1e40af;
-      border: 2px solid #93c5fd;
-    }
-
-    .feedback-banner.ng {
-      background: #ffe4e6;
-      color: #9f1239;
-      border: 2px solid #fda4af;
-    }
-
-    .jp-answer-box {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      padding: 12px 14px;
-      margin: 12px 0;
-    }
-
-    .primary-action-btn {
-      width: 100%;
-      min-height: 58px;
-      border-radius: 16px;
-      background: #1e293b;
-      color: #ffffff;
-      font-size: 1.05rem;
-      font-weight: 900;
-      margin-top: 8px;
-      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.16);
-    }
-
-    .save-sentence-btn {
-      width: 100%;
-      min-height: 48px;
-      border-radius: 14px;
-      background: #fffbeb;
-      border: 2px solid #fcd34d;
-      color: #92400e;
-      font-size: 0.9rem;
-      font-weight: 800;
-      margin-top: 8px;
-    }
-
-    /* Quit Confirm Screen */
-    .quit-confirm-box {
-      min-height: 66vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-
-    .quit-confirm-title {
-      font-size: 1.4rem;
-      font-weight: 900;
-      margin-bottom: 24px;
-      color: #0f172a;
-    }
-
-    .quit-confirm-actions {
-      width: 100%;
-      max-width: 360px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .btn-quit-red {
-      width: 100%;
-      min-height: 60px;
-      border-radius: 16px;
-      background: #ffffff;
-      border: 2px solid #fda4af;
-      color: #dc2626;
-      font-size: 1.1rem;
-      font-weight: 900;
-    }
-
-    .btn-continue-blue {
-      width: 100%;
-      min-height: 60px;
-      border-radius: 16px;
-      background: #ffffff;
-      border: 2px solid #93c5fd;
-      color: #2563eb;
-      font-size: 1.1rem;
-      font-weight: 900;
-    }
-
-    /* Lists (Vocab & Saved Sentences) */
-    .list-item-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 14px;
-      margin-bottom: 10px;
-    }
-
-    .delete-mini-btn {
-      min-height: 40px;
-      padding: 6px 12px;
-      border-radius: 10px;
-      background: #fee2e2;
-      color: #b91c1c;
-      font-size: 0.8rem;
-      font-weight: 800;
-    }
-
-    .stat-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin: 14px 0;
-    }
-
-    .stat-box {
-      background: rgba(255, 255, 255, 0.85);
-      border: 1px solid rgba(203, 213, 225, 0.8);
-      border-radius: 16px;
-      padding: 14px;
-      text-align: center;
-    }
-
-    .stat-num {
-      font-size: 1.5rem;
-      font-weight: 900;
-      color: var(--text-main);
-    }
-
-    .stat-label {
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--text-sub);
-      margin-top: 4px;
-    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;padding:0;min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans",sans-serif;color:#0f172a;background:#f8fafc;transition:background .25s}
+    body.theme-home{background:linear-gradient(135deg,#f8fafc,#eef2ff)}
+    body.theme-ready{background:linear-gradient(135deg,#fefce8,#fde047)}
+    body.theme-play{background:linear-gradient(135deg,#f8fafc,#e0f2fe)}
+    body.theme-correct{background:linear-gradient(135deg,#eff6ff,#dbeafe)}
+    body.theme-wrong{background:linear-gradient(135deg,#fff1f2,#ffe4e6)}
+    body.theme-result-study{background:linear-gradient(135deg,#f5f3ff,#ede9fe)}
+    body.theme-result-ta-win{background:linear-gradient(135deg,#ecfdf5,#d1fae5)}
+    body.theme-result-ta-lose{background:linear-gradient(135deg,#f1f5f9,#cbd5e1)}
+    .hidden{display:none!important;pointer-events:none!important}
+    button{font-family:inherit;cursor:pointer;touch-action:manipulation;border:none;outline:none}
+    button:active{transform:scale(.97)}
+    .shell{max-width:640px;margin:0 auto;padding:12px 14px 32px}
+    .top-bar{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:6px 0 12px}
+    .brand{display:flex;align-items:center;gap:6px;background:transparent;font-weight:900;font-size:1rem;color:#0f172a;padding:4px}
+    .brand-icon{width:32px;height:32px;border-radius:9px;background:#4f46e5;color:#fff;display:inline-flex;align-items:center;justify-content:center}
+    .nav-btns{display:flex;gap:6px}
+    .pill{min-height:42px;padding:6px 10px;border-radius:11px;background:#fff;border:1px solid #cbd5e1;font-weight:800;font-size:.78rem;color:#0f172a;display:inline-flex;align-items:center;gap:4px}
+    .badge{background:#eef2ff;color:#4f46e5;padding:1px 6px;border-radius:99px;font-size:.72rem}
+    .card{background:rgba(255,255,255,.96);border:1px solid #e2e8f0;border-radius:20px;padding:16px;box-shadow:0 6px 20px rgba(15,23,42,.06);margin-bottom:12px}
+    .label{font-size:.82rem;font-weight:800;color:#475569;margin:0 0 8px;display:flex;justify-content:space-between}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .chip{min-height:50px;padding:8px;border-radius:13px;background:#f8fafc;border:2px solid #e2e8f0;font-weight:800;font-size:.9rem;color:#0f172a;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .chip small{font-size:.68rem;color:#64748b;font-weight:600}
+    .chip.active{background:#eef2ff;border-color:#4f46e5;color:#3730a3}
+    .chip.active small{color:#4f46e5}
+    .stepper{display:flex;align-items:center;justify-content:space-between;background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:8px 12px}
+    .step-btn{width:46px;height:46px;border-radius:12px;background:#fff;border:2px solid #cbd5e1;font-size:1.25rem;font-weight:900}
+    .mode-btn{width:100%;min-height:64px;padding:12px 16px;border-radius:16px;color:#fff;font-weight:900;font-size:1rem;display:flex;align-items:center;justify-content:space-between;text-align:left;margin-bottom:10px}
+    .mode-btn.study{background:linear-gradient(135deg,#2563eb,#4f46e5)}
+    .mode-btn.ta{background:linear-gradient(135deg,#059669,#0d9488)}
+    .mode-btn small{display:block;font-size:.74rem;font-weight:600;opacity:.92;margin-top:2px}
+    .banner{border-radius:12px;padding:9px 12px;font-size:.8rem;font-weight:700;margin-bottom:10px}
+    .banner.info{background:#eef2ff;color:#3730a3;border:1px solid #c7d2fe}
+    .banner.retry{background:#fff1f2;color:#be123c;border:1px solid #fecdd3}
+    .ready-box{min-height:66vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+    .ready-text{font-size:2.8rem;font-weight:900;color:#854d0e}
+    .play-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .quit-btn{min-height:44px;min-width:78px;padding:6px 12px;border-radius:12px;background:#fff;border:2px solid #cbd5e1;font-weight:800;font-size:.88rem}
+    .timer-bar{background:#e2e8f0;height:10px;border-radius:99px;overflow:hidden;margin-bottom:6px}
+    .timer-fill{height:100%;width:100%;background:linear-gradient(90deg,#3b82f6,#10b981)}
+    .timer-fill.danger{background:#ef4444}
+    .sentence{font-size:1.3rem;line-height:1.7;font-weight:800;margin:8px 0}
+    .tok{display:inline-block;padding:2px 4px;margin:1px;border-radius:7px;border-bottom:2px dashed #cbd5e1;cursor:pointer}
+    .tok.cw{color:#dc2626;background:#fee2e2;border-bottom-color:#f87171}
+    .toast{background:#fefce8;border:1px solid #fde047;color:#713f12;border-radius:10px;padding:8px 10px;font-size:.84rem;font-weight:700;margin-top:6px}
+    .opt-btn{width:100%;min-height:56px;padding:12px 14px;border-radius:14px;background:#fff;border:2px solid #cbd5e1;font-size:.94rem;font-weight:700;text-align:left;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+    .opt-idx{width:28px;height:28px;border-radius:8px;background:#f1f5f9;font-weight:900;font-size:.8rem;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+    .fb-head{padding:12px 14px;border-radius:14px;font-weight:900;font-size:1.1rem;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+    .fb-head.ok{background:#dbeafe;color:#1e40af;border:2px solid #93c5fd}
+    .fb-head.ng{background:#ffe4e6;color:#9f1239;border:2px solid #fda4af}
+    .action-btn{width:100%;min-height:54px;border-radius:14px;background:#1e293b;color:#fff;font-size:1rem;font-weight:900;margin-top:8px}
+    .save-btn{width:100%;min-height:46px;border-radius:12px;background:#fffbeb;border:2px solid #fcd34d;color:#92400e;font-weight:800;font-size:.88rem;margin-top:6px}
+    .confirm-box{min-height:64vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+    .btn-red{width:100%;max-width:320px;min-height:56px;border-radius:14px;background:#fff;border:2px solid #fda4af;color:#dc2626;font-size:1.05rem;font-weight:900;margin-bottom:12px}
+    .btn-blue{width:100%;max-width:320px;min-height:56px;border-radius:14px;background:#fff;border:2px solid #93c5fd;color:#2563eb;font-size:1.05rem;font-weight:900}
+    .item-card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:12px;margin-bottom:8px}
+    .del-btn{min-height:38px;padding:4px 10px;border-radius:9px;background:#fee2e2;color:#b91c1c;font-size:.78rem;font-weight:800}
+    .input-box{width:100%;min-height:46px;padding:10px 12px;border-radius:12px;border:2px solid #cbd5e1;font-size:.9rem;margin-bottom:8px}
+    .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+    .stat-box{background:rgba(255,255,255,.85);border:1px solid #cbd5e1;border-radius:14px;padding:12px;text-align:center}
   </style>
 </head>
 <body class="theme-home">
-  <div class="app-shell">
-    <!-- Top Header -->
+  <div class="shell">
     <header class="top-bar" id="mainHeader">
-      <button type="button" class="brand-btn" id="logoHomeBtn">
-        <span class="brand-icon">⚡</span>
-        <span>意味単語速読</span>
-      </button>
-      <div class="nav-actions">
-        <button type="button" class="nav-pill" id="openSavedBtn">
-          <span>📑 保存英文</span>
-          <span class="badge-count" id="savedCountBadge">0</span>
-        </button>
-        <button type="button" class="nav-pill" id="openVocabBtn">
-          <span>📚 単語帳</span>
-          <span class="badge-count" id="vocabCountBadge">0</span>
-        </button>
+      <button type="button" class="brand" id="logoHomeBtn"><span class="brand-icon">⚡</span><span>意味単語速読</span></button>
+      <div class="nav-btns">
+        <button type="button" class="pill" id="openSavedBtn">📑保存 <span class="badge" id="savedBadge">0</span></button>
+        <button type="button" class="pill" id="openVocabBtn">📚単語帳 <span class="badge" id="vocabBadge">0</span></button>
+        <button type="button" class="pill" id="openAiBtn">🤖AI</button>
       </div>
     </header>
 
-    <!-- 1. HOME VIEW -->
+    <!-- HOME -->
     <main id="viewHome">
-      <div class="card">
-        <h1 class="hero-title">意味単語を瞬時に見抜く</h1>
-        <p class="hero-sub">赤字になる「意味単語（名詞・動詞・形容詞・副詞）」だけを拾って、ネイティブ速度で意味を掴むトレーニング。</p>
-      </div>
-
-      <div id="homeRetryBanner" class="status-banner retry hidden"></div>
-      <div id="homeVocabBanner" class="status-banner hidden"></div>
+      <div id="aiStatusBanner" class="banner info hidden"></div>
+      <div id="retryBanner" class="banner retry hidden"></div>
+      <div id="vocabBanner" class="banner info hidden"></div>
 
       <div class="card">
-        <div class="section-label"><span>① 単語の難易度</span></div>
-        <div class="grid-2" id="diffGroup">
-          <button type="button" class="choice-chip active" data-diff="easy">簡単<small>中学・基礎語彙</small></button>
-          <button type="button" class="choice-chip" data-diff="normal">普通<small>高校・日常実用</small></button>
-          <button type="button" class="choice-chip" data-diff="hard">難しい<small>ニュース・論理</small></button>
-          <button type="button" class="choice-chip" data-diff="demon">鬼畜<small>学術・高度抽象語</small></button>
+        <div class="label"><span>① 単語の難易度</span></div>
+        <div class="grid2" id="diffGroup">
+          <button type="button" class="chip active" data-diff="easy">簡単<small>中学・基礎</small></button>
+          <button type="button" class="chip" data-diff="normal">普通<small>高校・実用</small></button>
+          <button type="button" class="chip" data-diff="hard">難しい<small>ニュース・論理</small></button>
+          <button type="button" class="chip" data-diff="demon">鬼畜<small>学術・高度抽象</small></button>
         </div>
 
-        <div class="section-label" style="margin-top: 16px;"><span>② 文章の単語数</span></div>
-        <div class="grid-2" id="lenGroup">
-          <button type="button" class="choice-chip active" data-len="3-5">3〜5語<small>超短文フレーズ</small></button>
-          <button type="button" class="choice-chip" data-len="6-8">6〜8語<small>基本の1文</small></button>
-          <button type="button" class="choice-chip" data-len="9-12">9〜12語<small>修飾つき標準文</small></button>
-          <button type="button" class="choice-chip" data-len="13+">13語〜<small>複文・長文構造</small></button>
+        <div class="label" style="margin-top:14px"><span>② 文章の単語数</span></div>
+        <div class="grid2" id="lenGroup">
+          <button type="button" class="chip active" data-len="3-5">3〜5語<small>超短文</small></button>
+          <button type="button" class="chip" data-len="6-8">6〜8語<small>基本1文</small></button>
+          <button type="button" class="chip" data-len="9-12">9〜12語<small>修飾つき</small></button>
+          <button type="button" class="chip" data-len="13+">13語〜<small>複文・長文</small></button>
         </div>
 
-        <div class="section-label" style="margin-top: 16px;">
-          <span>③ 制限時間の延長（学習モード）</span>
-          <span style="font-size:0.74rem; color:#64748b;">基本＋4択を読む時間＋延長</span>
-        </div>
-        <div class="time-control-box">
-          <span style="font-size:0.85rem; font-weight:700; color:#475569;">追加バッファ</span>
-          <div class="stepper-btns">
+        <div class="label" style="margin-top:14px"><span>③ 制限時間の延長（学習モード）</span></div>
+        <div class="stepper">
+          <span style="font-size:.82rem;font-weight:700;color:#475569">追加時間（0〜10秒）</span>
+          <div style="display:flex;align-items:center;gap:8px">
             <button type="button" class="step-btn" id="timeMinusBtn">−</button>
-            <span class="extra-time-val" id="extraTimeDisplay">+0秒</span>
+            <strong id="extraTimeText" style="min-width:52px;text-align:center;color:#4f46e5">+0秒</strong>
             <button type="button" class="step-btn" id="timePlusBtn">＋</button>
           </div>
         </div>
       </div>
 
       <button type="button" class="mode-btn study" id="startStudyBtn">
-        <div>
-          📘 学習モード（10問）
-          <span class="sub">1問ごとに意味単語を赤字解説・未知語タップ保存</span>
-        </div>
-        <span style="font-size:1.3rem;">▶</span>
+        <div>📘 学習モード（10問）<small>赤字解説・未知語タップ・4択読解時間付き</small></div><span>▶</span>
       </button>
-
       <button type="button" class="mode-btn ta" id="startTaBtn">
-        <div>
-          ⏱️ タイムアタック（10問連続）
-          <span class="sub">1問でも間違えたら即終了・ネイティブ速度と競争</span>
-        </div>
-        <span style="font-size:1.3rem;">▶</span>
+        <div>⏱️ タイムアタック（10問）<small>1問ミスで即終了・ネイティブ速度と競争</small></div><span>▶</span>
       </button>
     </main>
 
-    <!-- 2. READY COUNTDOWN VIEW -->
+    <!-- LOADING AI -->
+    <section id="viewLoading" class="hidden">
+      <div class="card ready-box">
+        <div style="font-size:1.2rem;font-weight:900;color:#4f46e5;margin-bottom:8px">🤖 AIが難易度通りの英文を作成中…</div>
+        <p style="font-size:.84rem;color:#64748b;margin:0">選択した難易度・語数に合わせて即興生成しています</p>
+      </div>
+    </section>
+
+    <!-- READY -->
     <section id="viewReady" class="hidden">
       <div class="ready-box">
-        <div style="font-size:0.95rem; font-weight:800; color:#854d0e; margin-bottom:12px;">集中してください…</div>
+        <div style="font-size:.9rem;font-weight:800;color:#854d0e;margin-bottom:10px">集中してください…</div>
         <div class="ready-text" id="readyLabel">Are you ready?</div>
       </div>
     </section>
 
-    <!-- 3. PLAY VIEW -->
+    <!-- PLAY -->
     <section id="viewPlay" class="hidden">
-      <div class="play-top-bar">
+      <div class="play-top">
         <button type="button" class="quit-btn" id="pauseQuitBtn">中断</button>
-        <div class="progress-pill" id="playProgressText">第 1 / 10 問</div>
-        <div class="progress-pill" id="playModeBadge">学習</div>
+        <span class="pill" id="playProgress">第 1 / 10 問</span>
+        <span class="pill" id="playTag">easy / 3-5語</span>
       </div>
-
       <div class="card">
-        <div class="timer-wrap">
-          <div class="timer-fill" id="timerFill"></div>
+        <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:.78rem;font-weight:700;color:#475569">
+          <span id="timerText">残り --.- 秒</span>
+          <span id="retryTag" class="hidden" style="color:#e11d48">🔥 苦手リベンジ</span>
         </div>
-        <div class="timer-meta">
-          <span id="timerDetailText">残り --.- 秒</span>
-          <span id="retryBadge" class="hidden" style="color:#e11d48;">🔥 苦手克服リベンジ問題</span>
-        </div>
-
-        <div style="font-size:0.76rem; color:#64748b; font-weight:700;">※分からない英単語をタップすると意味が出て単語帳に保存されます</div>
-        <div class="sentence-box" id="playSentenceBox"></div>
-        <div class="word-hint-toast hidden" id="playWordToast"></div>
+        <div style="font-size:.72rem;color:#64748b;margin-top:6px">※分からない単語をタップすると意味が出て単語帳に保存されます</div>
+        <div class="sentence" id="playSentence"></div>
+        <div class="toast hidden" id="playToast"></div>
       </div>
-
-      <div id="optionsContainer"></div>
+      <div id="optionsBox"></div>
     </section>
 
-    <!-- 4. QUIT CONFIRMATION VIEW (Hides Active Question Completely) -->
+    <!-- QUIT CONFIRM -->
     <section id="viewQuitConfirm" class="hidden">
-      <div class="card quit-confirm-box">
-        <div class="quit-confirm-title">本当に中断しますか</div>
-        <div class="quit-confirm-actions">
-          <button type="button" class="btn-quit-red" id="confirmQuitRedBtn">中断</button>
-          <button type="button" class="btn-continue-blue" id="cancelQuitBlueBtn">続ける</button>
-        </div>
+      <div class="card confirm-box">
+        <div style="font-size:1.35rem;font-weight:900;margin-bottom:22px">本当に中断しますか</div>
+        <button type="button" class="btn-red" id="confirmQuitRedBtn">中断</button>
+        <button type="button" class="btn-blue" id="cancelQuitBlueBtn">続ける</button>
       </div>
     </section>
 
-    <!-- 5. FEEDBACK VIEW -->
+    <!-- FEEDBACK -->
     <section id="viewFeedback" class="hidden">
       <div class="card">
-        <div class="feedback-banner ok" id="feedbackBanner">
-          <span id="feedbackTitle">⭕ 正解！</span>
-          <span id="feedbackSubBadge" style="font-size:0.82rem;"></span>
+        <div class="fb-head ok" id="fbHead"><span id="fbTitle">⭕ 正解！</span><span id="fbSub" style="font-size:.8rem"></span></div>
+        <div style="font-size:.76rem;font-weight:800;color:#475569">赤字 ＝ 意味単語（タップで単語帳へ保存）</div>
+        <div class="sentence" id="fbSentence"></div>
+        <div class="toast hidden" id="fbToast"></div>
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:10px 12px;margin:10px 0">
+          <div style="font-size:.72rem;font-weight:800;color:#64748b">正しい日本語訳</div>
+          <div style="font-size:1rem;font-weight:800;margin-top:3px" id="fbCorrectJp"></div>
+          <div id="fbWrongNote" style="font-size:.8rem;color:#be123c;font-weight:700;margin-top:4px"></div>
         </div>
-
-        <div style="font-size:0.8rem; font-weight:800; color:#475569; margin-bottom:4px;">
-          赤字 ＝ 意味単語（内容語） ※タップで単語帳へ保存可
-        </div>
-        <div class="sentence-box" id="feedbackSentenceBox"></div>
-        <div class="word-hint-toast hidden" id="feedbackWordToast"></div>
-
-        <div class="jp-answer-box">
-          <div style="font-size:0.75rem; font-weight:800; color:#64748b; margin-bottom:4px;">正しい日本語訳</div>
-          <div style="font-size:1.05rem; font-weight:800; color:#0f172a; line-height:1.5;" id="feedbackCorrectJp"></div>
-          <div id="feedbackUserChoiceNote" style="font-size:0.82rem; color:#be123c; font-weight:700; margin-top:6px;"></div>
-        </div>
-
-        <button type="button" class="save-sentence-btn" id="manualSaveSentenceBtn">⭐ この英文を保存する</button>
-        <button type="button" class="primary-action-btn" id="nextQuestionBtn">次へ →</button>
+        <button type="button" class="save-btn" id="manualSaveBtn">⭐ この英文を保存する</button>
+        <button type="button" class="action-btn" id="nextBtn">次へ →</button>
       </div>
     </section>
 
-    <!-- 6. RESULT VIEW -->
+    <!-- RESULT -->
     <section id="viewResult" class="hidden">
       <div class="card">
-        <h2 style="margin:0 0 6px; font-size:1.4rem; font-weight:900;" id="resultHeading">学習モード結果</h2>
-        <p style="margin:0; font-size:0.88rem; color:#475569;" id="resultSubText"></p>
-
-        <div class="stat-grid" id="resultStatsGrid"></div>
-
-        <div id="resultTappedWrap" class="hidden" style="margin-top:14px;">
-          <div class="section-label"><span>今回タップして調べた単語</span></div>
-          <div id="resultTappedList"></div>
+        <h2 style="margin:0 0 6px;font-size:1.35rem;font-weight:900" id="resTitle">結果</h2>
+        <p style="margin:0;font-size:.84rem;color:#475569" id="resSub"></p>
+        <div class="stat-grid" id="resStats"></div>
+        <div id="resTappedWrap" class="hidden">
+          <div class="label"><span>今回タップした単語</span></div>
+          <div id="resTappedList"></div>
         </div>
-
-        <button type="button" class="primary-action-btn" id="playAgainBtn" style="background:#4f46e5; margin-top:14px;">もう一回同じモードで遊ぶ</button>
-        <button type="button" class="primary-action-btn" id="backHomeFromResultBtn" style="background:#334155;">ホーム画面に戻る</button>
+        <button type="button" class="action-btn" id="againBtn" style="background:#4f46e5">もう一回同じモードで遊ぶ</button>
+        <button type="button" class="action-btn" id="resHomeBtn" style="background:#334155">ホーム画面に戻る</button>
       </div>
     </section>
 
-    <!-- 7. VOCABULARY BOOK VIEW -->
+    <!-- VOCAB -->
     <section id="viewVocab" class="hidden">
       <div class="card">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
-          <h2 style="margin:0; font-size:1.25rem; font-weight:900;">📚 マイ単語帳</h2>
-          <button type="button" class="nav-pill" id="closeVocabBtn">← 戻る</button>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <h2 style="margin:0;font-size:1.2rem;font-weight:900">📚 マイ単語帳</h2>
+          <button type="button" class="pill" id="closeVocabBtn">← 戻る</button>
         </div>
-        <p style="margin:0 0 12px; font-size:0.82rem; color:#475569;">プレイ中にタップした単語が自動保存され、次回以降の問題に優先的に出題されます。</p>
-        <div id="vocabListContainer"></div>
+        <div id="vocabList"></div>
       </div>
     </section>
 
-    <!-- 8. SAVED SENTENCES VIEW -->
+    <!-- SAVED SENTENCES -->
     <section id="viewSaved" class="hidden">
       <div class="card">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
-          <h2 style="margin:0; font-size:1.25rem; font-weight:900;">📑 保存した英文</h2>
-          <button type="button" class="nav-pill" id="closeSavedBtn">← 戻る</button>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <h2 style="margin:0;font-size:1.2rem;font-weight:900">📑 保存した英文</h2>
+          <button type="button" class="pill" id="closeSavedBtn">← 戻る</button>
         </div>
-        <p style="margin:0 0 12px; font-size:0.82rem; color:#475569;">間違えた英文や手動保存した英文を、意味単語（赤字）付きで見返せます。</p>
-        <div id="savedListContainer"></div>
+        <div id="savedList"></div>
+      </div>
+    </section>
+
+    <!-- AI API KEY SETTINGS -->
+    <section id="viewAi" class="hidden">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <h2 style="margin:0;font-size:1.2rem;font-weight:900">🤖 AI即興生成の設定</h2>
+          <button type="button" class="pill" id="closeAiBtn">← 戻る</button>
+        </div>
+        <p style="font-size:.82rem;color:#475569;line-height:1.5;margin:0 0 10px">
+          Gemini APIキーを設定すると、毎回AIが選択した難易度・語数に厳密に合わせた新作英文を無限に生成します。<br>
+          ※未設定でも全16パターン（難易度4種×語数4種）対応の内蔵問題バンクで正確に遊べます。
+        </p>
+        <input type="password" class="input-box" id="apiKeyInput" placeholder="AIzaSy...（Gemini APIキーを入力）" />
+        <button type="button" class="action-btn" id="saveApiKeyBtn" style="background:#4f46e5">APIキーを保存する</button>
+        <button type="button" class="save-btn" id="clearApiKeyBtn" style="background:#fff1f2;border-color:#fda4af;color:#be123c">APIキーを削除（内蔵問題モードに戻す）</button>
       </div>
     </section>
   </div>
 
   <script>
-    (function () {
-      const STORAGE_KEYS = {
-        VOCAB: "swm_vocab_v3",
-        SAVED: "swm_saved_sentences_v3",
-        RETRY: "swm_retry_queue_v3",
-        HISTORY: "swm_seen_history_v3",
-        BEST_TA: "swm_best_ta_v3"
-      };
+  (function(){
+    const K={VOCAB:"swm_v4_vocab",SAVED:"swm_v4_saved",RETRY:"swm_v4_retry",HIST:"swm_v4_hist",TA:"swm_v4_ta",KEY:"swm_v4_apikey"};
+    const STOP=new Set(["a","an","the","in","on","at","to","for","with","by","about","into","through","during","before","after","from","up","down","of","off","over","under","then","once","here","there","when","where","why","how","all","any","both","each","more","most","other","some","such","no","nor","not","only","own","same","so","than","too","very","can","will","just","should","now","i","me","my","we","our","you","your","he","him","his","she","her","it","its","they","them","their","what","which","who","this","that","these","those","am","is","are","was","were","be","been","being","have","has","had","do","does","did","would","could","as","if","or","because","until","while","but","yet","although","though","since","unless"]);
 
-      const STOP_WORDS = new Set([
-        "a","an","the","in","on","at","to","for","with","by","about","against","between","into","through",
-        "during","before","after","above","below","from","up","down","of","off","over","under","again",
-        "further","then","once","here","there","when","where","why","how","all","any","both","each",
-        "few","more","most","other","some","such","no","nor","not","only","own","same","so","than",
-        "too","very","s","t","can","will","just","don","should","now","i","me","my","myself","we","our",
-        "ours","ourselves","you","your","yours","yourself","yourselves","he","him","his","himself","she",
-        "her","hers","herself","it","its","itself","they","them","their","theirs","themselves","what",
-        "which","who","whom","this","that","these","those","am","is","are","was","were","be","been",
-        "being","have","has","had","having","do","does","did","doing","would","could","ought","as","if",
-        "or","because","until","while","but","yet","although","though","since","unless"
-      ]);
+    // Compact format: [diff, len, en, jp, [wrong1, wrong2, wrong3], {word:meaning}]
+    // Every single one of the 16 (diff x len) combinations has dedicated, strictly verified sentences!
+    const RAW_BANK = [
+      // easy 3-5
+      ["easy","3-5","The train arrived early today.","その電車は今日早く到着した。",["そのバスは昨日遅れて出発した。","その電車は明日早く到着する予定だ。","その駅は今日とても混雑していた。"],{train:"電車",arrived:"到着した",early:"早く",today:"今日"}],
+      ["easy","3-5","Children love sweet red apples.","子どもたちは甘い赤いリンゴが大好きだ。",["子どもたちは酸っぱい緑のブドウが苦手だ。","大人たちは甘い赤いイチゴをよく買う。","子どもたちは冷たいアイスクリームを食べた。"],{Children:"子どもたち",love:"大好きだ",sweet:"甘い",red:"赤い",apples:"リンゴ"}],
+      ["easy","3-5","Fresh snow covered high mountains.","新しい雪が高い山々を覆った。",["激しい雨が高い山々を濡らした。","白い雲が広い海を覆い隠した。","新しい雪が小さな町の屋根に積もった。"],{Fresh:"新しい",snow:"雪",covered:"覆った",high:"高い",mountains:"山々"}],
+      ["easy","3-5","Our quiet library opens early.","私たちの静かな図書館は早く開く。",["私たちの大きな体育館は夜遅く閉まる。","駅前の古い本屋は日曜日に休む。","私たちの静かな教室は朝早く掃除される。"],{quiet:"静かな",library:"図書館",opens:"開く",early:"早く"}],
+      ["easy","3-5","Warm sunlight filled every room.","暖かい日光がすべての部屋を満たした。",["冷たい夜風がすべての窓から吹き込んだ。","明るい電灯が広い廊下を照らした。","暖かい春の雨が乾いた庭を潤した。"],{Warm:"暖かい",sunlight:"日光",filled:"満たした",every:"すべての",room:"部屋"}],
+      ["easy","3-5","Young musicians practiced every evening.","若い音楽家たちは毎晩練習した。",["有名な画家たちは毎朝公園で絵を描いた。","若い選手たちは毎週日曜日に試合をした。","ベテランの音楽家たちは新しい曲を録音した。"],{Young:"若い",musicians:"音楽家",practiced:"練習した",evening:"晩"}],
 
-      const BUILTIN_DICTIONARY = {
-        "train": "電車・訓練する", "arrived": "到着した", "early": "早く", "today": "今日",
-        "children": "子どもたち", "love": "大好きだ", "sweet": "甘い", "apples": "リンゴ",
-        "fresh": "新鮮な", "snow": "雪", "covered": "覆った", "mountains": "山々",
-        "quiet": "静かな", "library": "図書館", "opens": "開く", "nine": "9時",
-        "doctors": "医者たち", "warned": "警告した", "patients": "患者たち", "sugar": "砂糖",
-        "heavy": "激しい・重い", "rain": "雨", "delayed": "遅らせた", "morning": "朝の", "flight": "便・フライト",
-        "local": "地元の", "artists": "芸術家たち", "painted": "描いた", "colorful": "カラフルな", "murals": "壁画",
-        "modern": "現代の", "satellites": "人工衛星", "predict": "予測する", "severe": "激しい", "storms": "嵐",
-        "careful": "注意深い", "planning": "計画", "prevents": "防ぐ", "costly": "高額な", "mistakes": "ミス",
-        "ancient": "古代の", "coins": "硬貨", "revealed": "明らかにした", "hidden": "隠された", "trade": "貿易", "routes": "ルート",
-        "scientists": "科学者たち", "discovered": "発見した", "rare": "珍しい", "bacteria": "細菌", "beneath": "〜の下に", "deep": "深い", "ocean": "海", "ice": "氷",
-        "renewable": "再生可能な", "energy": "エネルギー", "projects": "事業", "reduced": "減らした", "carbon": "炭素", "emissions": "排出量", "across": "〜中で", "several": "いくつかの", "regions": "地域",
-        "strict": "厳しい", "privacy": "プライバシー", "laws": "法律", "require": "要求する", "tech": "IT・技術", "companies": "企業", "protect": "保護する", "user": "利用者", "data": "データ",
-        "experienced": "熟練した", "surgeons": "外科医たち", "collaborated": "協力した", "closely": "緊密に", "complete": "完了する", "delicate": "繊細な", "heart": "心臓", "operation": "手術",
-        "rapid": "急速な", "urbanization": "都市化", "often": "しばしば", "strains": "負担をかける", "public": "公共の", "transportation": "交通機関", "affordable": "手頃な", "housing": "住宅", "supplies": "供給",
-        "ambitious": "野心的な", "astronomers": "天文学者たち", "launched": "打ち上げた", "infrared": "赤外線の", "telescopes": "望遠鏡", "observe": "観測する", "distant": "遠くの", "galaxies": "銀河", "forming": "形成中の",
-        "unprecedented": "前例のない", "economic": "経済的な", "sanctions": "制裁", "disrupted": "混乱させた", "global": "世界的な", "supply": "供給", "chains": "連鎖・網", "throughout": "〜の間ずっと", "autumn": "秋",
-        "contemporary": "現代の", "neuroscientists": "神経科学者たち", "investigate": "調査する", "neural": "神経の", "mechanisms": "仕組み", "underlying": "根底にある", "human": "人間の", "consciousness": "意識",
-        "stringent": "厳格な", "regulatory": "規制の", "frameworks": "枠組み", "mitigate": "緩和する", "systemic": "全体の", "vulnerabilities": "脆弱性", "within": "〜内の", "financial": "金融の", "institutions": "機関",
-        "ubiquitous": "至る所にある", "surveillance": "監視", "algorithms": "アルゴリズム", "inadvertently": "うっかり・知らずに", "perpetuate": "永続させる", "societal": "社会の", "biases": "偏見", "despite": "〜にもかかわらず", "ostensible": "表面上の", "neutrality": "中立性",
-        "ephemeral": "つかの間の", "bioluminescent": "生物発光の", "organisms": "生物", "illuminate": "照らす", "abyssal": "深海の", "trenches": "海溝", "eluding": "逃れながら", "conventional": "従来の", "taxonomic": "分類学の", "classification": "分類",
-        "ambivalent": "相反する感情の", "diplomats": "外交官たち", "crafted": "作り上げた", "deliberately": "意図的に", "equivocal": "曖昧な", "treaty": "条約", "avert": "回避する", "imminent": "差し迫った", "geopolitical": "地政学的な", "escalation": "激化"
-      };
+      // easy 6-8
+      ["easy","6-8","Heavy morning rain delayed our school bus.","朝の激しい雨が私たちのスクールバスを遅らせた。",["夕方の強い風が私たちの電車を止めた。","朝の深い霧が空港の飛行機を遅らせた。","昨夜の激しい雪が学校の授業を中止にした。"],{Heavy:"激しい",morning:"朝の",rain:"雨",delayed:"遅らせた",school:"学校の",bus:"バス"}],
+      ["easy","6-8","Friendly neighbors shared homemade bread with us.","親切な隣人たちが手作りパンを私たちに分けてくれた。",["親切な同僚たちが新鮮な果物を私たちに贈った。","近くのパン屋が焼きたてのケーキを安く売った。","親切な隣人たちが庭で育てた野菜を届けてくれた。"],{Friendly:"親切な",neighbors:"隣人",shared:"分け合った",homemade:"手作りの",bread:"パン"}],
+      ["easy","6-8","Many tourists visit this historic temple yearly.","多くの観光客が毎年この歴史的な寺院を訪れる。",["地元の学生たちが毎月この新しい博物館を見学する。","多くの外国人観光客がこの美しい庭園で写真を撮る。","少数の研究者が毎年この古い城を調査する。"],{Many:"多くの",tourists:"観光客",visit:"訪れる",historic:"歴史的な",temple:"寺院",yearly:"毎年"}],
+      ["easy","6-8","Careful drivers always check mirrors before turning.","注意深い運転手は曲がる前に必ずミラーを確認する。",["初心者の運転手は駐車する前に何度も後ろを見る。","注意深い歩行者は道路を渡る前に必ず左右を見る。","熟練の運転手は出発する前にタイヤの空気を確認する。"],{Careful:"注意深い",drivers:"運転手",always:"いつも",check:"確認する",mirrors:"ミラー",turning:"曲がること"}],
+      ["easy","6-8","Bright stars shone clearly in desert skies.","明るい星々が砂漠の夜空にくっきりと輝いた。",["満月が静かな湖の水面に美しく映った。","明るい星々が山頂のキャンプ場の上で輝いた。","色とりどりの花火が夏の港の空に打ち上がった。"],{Bright:"明るい",stars:"星々",shone:"輝いた",clearly:"くっきりと",desert:"砂漠",skies:"空"}],
 
-      // Rich Categorized Question Bank (4 difficulties x 4 lengths x multiple genres)
-      const QUESTION_BANK = [
-        // EASY 3-5
-        { diff: "easy", len: "3-5", en: "The train arrived early today.", content: ["train","arrived","early","today"], jp: "その電車は今日早く到着した。", wrong: ["そのバスは昨日遅れて出発した。","その電車は明日早く到着する予定だ。","その駅は今日とても混雑していた。"], words: {train:"電車",arrived:"到着した",early:"早く",today:"今日"} },
-        { diff: "easy", len: "3-5", en: "Children love sweet red apples.", content: ["Children","love","sweet","red","apples"], jp: "子どもたちは甘い赤いリンゴが大好きだ。", wrong: ["子どもたちは酸っぱい緑のブドウが苦手だ。","大人たちは甘い赤いイチゴをよく買う。","子どもたちは冷たい甘いアイスクリームを食べた。"], words: {Children:"子どもたち",love:"大好きだ",sweet:"甘い",red:"赤い",apples:"リンゴ"} },
-        { diff: "easy", len: "3-5", en: "Fresh snow covered high mountains.", content: ["Fresh","snow","covered","high","mountains"], jp: "新しい雪が高い山々を覆った。", wrong: ["激しい雨が高い山々を濡らした。","白い雲が広い海を覆い隠した。","新しい雪が小さな町の屋根に積もった。"], words: {Fresh:"新しい・新鮮な",snow:"雪",covered:"覆った",high:"高い",mountains:"山々"} },
-        { diff: "easy", len: "3-5", en: "Our quiet library opens early.", content: ["quiet","library","opens","early"], jp: "私たちの静かな図書館は早く開く。", wrong: ["私たちの大きな体育館は夜遅く閉まる。","駅前の古い本屋は日曜日に休む。","私たちの静かな教室は朝早く掃除される。"], words: {quiet:"静かな",library:"図書館",opens:"開く",early:"早く"} },
-        { diff: "easy", len: "3-5", en: "Warm sunlight filled every room.", content: ["Warm","sunlight","filled","every","room"], jp: "暖かい日光がすべての部屋を満たした。", wrong: ["冷たい夜風がすべての窓から吹き込んだ。","明るい電灯が広い廊下を照らした。","暖かい春の雨が乾いた庭を潤した。"], words: {Warm:"暖かい",sunlight:"日光",filled:"満たした",every:"すべての",room:"部屋"} },
-        { diff: "easy", len: "3-5", en: "Young musicians practiced every evening.", content: ["Young","musicians","practiced","every","evening"], jp: "若い音楽家たちは毎晩練習した。", wrong: ["有名な画家たちは毎朝公園で絵を描いた。","若い選手たちは毎週日曜日に試合をした。","ベテランの音楽家たちは新しい曲を録音した。"], words: {Young:"若い",musicians:"音楽家たち",practiced:"練習した",every:"毎〜",evening:"晩・夕方"} },
+      // easy 9-12
+      ["easy","9-12","Local students planted fifty young trees along the river bank.","地元の生徒たちが川岸に沿って50本の若木を植えた。",["地域のボランティアが公園の周りに100本の花を植えた。","地元の生徒たちが川岸に落ちているゴミを50袋拾った。","市民団体が山道に沿って古い桜の木を手入れした。"],{Local:"地元の",students:"生徒",planted:"植えた",fifty:"50の",young:"若い",trees:"木々",river:"川",bank:"岸"}],
+      ["easy","9-12","Our science teacher showed an exciting video about deep oceans.","私たちの理科の先生は深海についてのワクワクする動画を見せた。",["私たちの歴史の先生は古代遺跡についての長い映画を見せた。","私たちの理科の先生は宇宙の惑星についての面白い本を貸した。","有名な海洋学者が深海生物についての写真集を出版した。"],{science:"理科",teacher:"先生",showed:"見せた",exciting:"ワクワクする",video:"動画",deep:"深い",oceans:"海"}],
+      ["easy","9-12","Busy commuters hurried toward the subway station during rush hour.","忙しい通勤客たちはラッシュアワーの間、地下鉄の駅へ向かって急いだ。",["多くの旅行客たちが連休の朝、空港のロビーへ向かって歩いた。","忙しい学生たちが授業の前に大学の図書館へ向かって走った。","疲れた会社員たちが終電の時間にバスの停留所へ急いだ。"],{Busy:"忙しい",commuters:"通勤客",hurried:"急いだ",subway:"地下鉄",station:"駅",rush:"混雑",hour:"時間帯"}],
+      ["easy","9-12","Small fishing boats returned safely to the harbor before sunset.","小さな漁船が日没前に安全に港へ戻ってきた。",["大型の貨物船が夜明け前に静かに港を出発した。","小さな観光船が午後の嵐の前に急いで島へ避難した。","地元の漁師たちが朝早く新鮮な魚を市場へ運んだ。"],{Small:"小さな",fishing:"漁業の",boats:"船",returned:"戻った",safely:"安全に",harbor:"港",sunset:"日没"}],
 
-        // EASY 6-8
-        { diff: "easy", len: "6-8", en: "Heavy morning rain delayed our school bus.", content: ["Heavy","morning","rain","delayed","school","bus"], jp: "朝の激しい雨が私たちのスクールバスを遅らせた。", wrong: ["夕方の強い風が私たちの電車を止めた。","朝の深い霧が空港の飛行機を遅らせた。","昨夜の激しい雪が学校の授業を中止にした。"], words: {Heavy:"激しい",morning:"朝の",rain:"雨",delayed:"遅らせた",school:"学校の",bus:"バス"} },
-        { diff: "easy", len: "6-8", en: "Friendly neighbors shared homemade bread with us.", content: ["Friendly","neighbors","shared","homemade","bread"], jp: "親切な隣人たちが手作りパンを私たちに分けてくれた。", wrong: ["親切な同僚たちが新鮮な果物を私たちに贈った。","近くのパン屋が焼きたてのケーキを安く売った。","親切な隣人たちが庭で育てた野菜を届けてくれた。"], words: {Friendly:"親切な",neighbors:"隣人たち",shared:"分け合った",homemade:"手作りの",bread:"パン"} },
-        { diff: "easy", len: "6-8", en: "Many tourists visit this historic temple yearly.", content: ["Many","tourists","visit","historic","temple","yearly"], jp: "多くの観光客が毎年この歴史的な寺院を訪れる。", wrong: ["地元の学生たちが毎月この新しい博物館を見学する。","多くの外国人観光客がこの美しい庭園で写真を撮る。","少数の研究者が毎年この古い城を調査する。"], words: {Many:"多くの",tourists:"観光客",visit:"訪れる",historic:"歴史的な",temple:"寺院",yearly:"毎年"} },
-        { diff: "easy", len: "6-8", en: "Careful drivers always check mirrors before turning.", content: ["Careful","drivers","always","check","mirrors","turning"], jp: "注意深い運転手は曲がる前に必ずミラーを確認する。", wrong: ["初心者の運転手は駐車する前に何度も後ろを見る。","注意深い歩行者は道路を渡る前に必ず左右を見る。","熟練の運転手は出発する前にタイヤの空気を確認する。"], words: {Careful:"注意深い",drivers:"運転手",always:"いつも",check:"確認する",mirrors:"鏡・ミラー",turning:"曲がること"} },
-        { diff: "easy", len: "6-8", en: "Bright stars shone clearly in desert skies.", content: ["Bright","stars","shone","clearly","desert","skies"], jp: "明るい星々が砂漠の夜空にくっきりと輝いた。", wrong: ["満月が静かな湖の水面に美しく映った。","明るい星々が山頂のキャンプ場の上で輝いた。","色とりどりの花火が夏の港の空に打ち上がった。"], words: {Bright:"明るい",stars:"星々",shone:"輝いた",clearly:"くっきりと",desert:"砂漠",skies:"空"} },
+      // easy 13+
+      ["easy","13+","Every Saturday morning, my grandfather wakes up early to water vegetables in his garden.","毎週土曜日の朝、私の祖父は庭の野菜に水をやるために早起きする。",["毎週日曜日の夕方、私の祖母は裏庭の花に肥料をやるために外に出る。","平日の朝早く、私の父は駅まで歩く前に庭の芝生を刈る。","毎週土曜日の午後、私の祖父は畑で収穫した野菜を近所に配る。"],{Saturday:"土曜日",morning:"朝",grandfather:"祖父",wakes:"起きる",early:"早く",water:"水をやる",vegetables:"野菜",garden:"庭"}],
+      ["easy","13+","Although the weather forecast predicted rain, clear blue skies lasted throughout our outdoor picnic.","天気予報は雨を予測していたが、屋外でのピクニックの間ずっと澄んだ青空が続いた。",["天気予報は晴れを伝えていたが、キャンプの途中で突然激しい雨が降り出した。","天気予報通り午前中は雨が降ったが、午後の運動会までには青空が広がった。","強い風が吹くという予報だったが、海辺での散歩の間ずっと穏やかな天気だった。"],{weather:"天気",forecast:"予報",predicted:"予測した",rain:"雨",clear:"澄んだ",skies:"空",lasted:"続いた",outdoor:"屋外の",picnic:"ピクニック"}],
+      ["easy","13+","Many high school students join volunteer groups to clean local parks on sunny weekends.","多くの高校生が晴れた週末に地元の公園を掃除するためボランティア団体に参加する。",["多くの中学生が夏休みの間に地域の図書館で本の整理を手伝う。","地元の大学生たちが雨の日の朝に駅前の道路でゴミ拾いを行う。","多くの高校生が文化祭の準備をするため放課後に教室へ残る。"],{high:"高い",school:"学校",students:"生徒",join:"参加する",volunteer:"ボランティア",clean:"掃除する",local:"地元の",parks:"公園",weekends:"週末"}],
 
-        // EASY 9-12
-        { diff: "easy", len: "9-12", en: "Local students planted fifty young trees along the river bank.", content: ["Local","students","planted","fifty","young","trees","along","river","bank"], jp: "地元の生徒たちが川岸に沿って50本の若木を植えた。", wrong: ["地域のボランティアが公園の周りに100本の花を植えた。","地元の生徒たちが川岸に落ちているゴミを50袋拾った。","市民団体が山道に沿って古い桜の木を手入れした。"], words: {Local:"地元の",students:"生徒たち",planted:"植えた",fifty:"50の",young:"若い",trees:"木々",river:"川",bank:"岸・土手"} },
-        { diff: "easy", len: "9-12", en: "Our science teacher showed an exciting video about deep oceans.", content: ["science","teacher","showed","exciting","video","deep","oceans"], jp: "私たちの理科の先生は深海についてのワクワクする動画を見せた。", wrong: ["私たちの歴史の先生は古代遺跡についての長い映画を見せた。","私たちの理科の先生は宇宙の惑星についての面白い本を貸した。","有名な海洋学者が深海生物についての写真集を出版した。"], words: {science:"理科・科学",teacher:"先生",showed:"見せた",exciting:"ワクワクする",video:"動画",deep:"深い",oceans:"海"} },
-        { diff: "easy", len: "9-12", en: "Busy commuters hurried toward the subway station during rush hour.", content: ["Busy","commuters","hurried","toward","subway","station","rush","hour"], jp: "忙しい通勤客たちはラッシュアワーの間、地下鉄の駅へ向かって急いだ。", wrong: ["多くの旅行客たちが連休の朝、空港のロビーへ向かって歩いた。","忙しい学生たちが授業の前に大学の図書館へ向かって走った。","疲れた会社員たちが終電の時間にバスの停留所へ急いだ。"], words: {Busy:"忙しい",commuters:"通勤客",hurried:"急いだ",toward:"〜へ向かって",subway:"地下鉄",station:"駅",rush:"混雑",hour:"時間帯"} },
+      // normal 3-5
+      ["normal","3-5","Careful planning prevents costly mistakes.","入念な計画は手痛い失敗を防ぐ。",["拙速な決断は大きな利益を生む。","綿密な調査は新たな課題を発見する。","入念な準備は余計な時間を奪う。"],{Careful:"入念な",planning:"計画",prevents:"防ぐ",costly:"手痛い",mistakes:"失敗"}],
+      ["normal","3-5","Modern satellites predict severe storms.","現代の人工衛星は激しい嵐を予測する。",["最新の観測船は海底の地震を記録する。","現代の気象台は穏やかな気候を分析する。","大型の人工衛星は世界の通信を支える。"],{Modern:"現代の",satellites:"人工衛星",predict:"予測する",severe:"激しい",storms:"嵐"}],
+      ["normal","3-5","Regular exercise improves mental focus.","定期的な運動は精神的な集中力を高める。",["十分な睡眠は身体の疲労を回復させる。","毎日の読書は論理的な思考力を養う。","適度な休息は仕事の効率を改善する。"],{Regular:"定期的な",exercise:"運動",improves:"高める",mental:"精神の",focus:"集中力"}],
+      ["normal","3-5","Ancient coins revealed hidden routes.","古代の硬貨が隠された交易路を明らかにした。",["古い地図が失われた財宝の場所を示した。","古代の壁画が当時の生活様式を伝えた。","発掘された土器が新たな文化圏を証明した。"],{Ancient:"古代の",coins:"硬貨",revealed:"明らかにした",hidden:"隠された",routes:"ルート"}],
 
-        // EASY 13+
-        { diff: "easy", len: "13+", en: "Every Saturday morning, my grandfather wakes up early to water vegetables in his garden.", content: ["Saturday","morning","grandfather","wakes","early","water","vegetables","garden"], jp: "毎週土曜日の朝、私の祖父は庭の野菜に水をやるために早起きする。", wrong: ["毎週日曜日の夕方、私の祖母は裏庭の花に肥料をやるために外に出る。","平日の朝早く、私の父は駅まで歩く前に庭の芝生を刈る。","毎週土曜日の午後、私の祖父は畑で収穫した野菜を近所に配る。"], words: {Saturday:"土曜日",morning:"朝",grandfather:"祖父",wakes:"起きる",early:"早く",water:"水をやる",vegetables:"野菜",garden:"庭"} },
-        { diff: "easy", len: "13+", en: "Although the weather forecast predicted rain, clear blue skies lasted throughout our outdoor picnic.", content: ["weather","forecast","predicted","rain","clear","blue","skies","lasted","outdoor","picnic"], jp: "天気予報は雨を予測していたが、屋外でのピクニックの間ずっと澄んだ青空が続いた。", wrong: ["天気予報は晴れを伝えていたが、キャンプの途中で突然激しい雨が降り出した。","天気予報通り午前中は雨が降ったが、午後の運動会までには青空が広がった。","強い風が吹くという予報だったが、海辺での散歩の間ずっと穏やかな天気だった。"], words: {weather:"天気",forecast:"予報",predicted:"予測した",rain:"雨",clear:"澄んだ",blue:"青い",skies:"空",lasted:"続いた",outdoor:"屋外の",picnic:"ピクニック"} },
+      // normal 6-8
+      ["normal","6-8","Doctors warned patients against consuming excessive sugar.","医師たちは患者に対し過剰な砂糖の摂取を控えるよう警告した。",["栄養士たちは学生に対し毎日の朝食を抜かないよう助言した。","医師たちは高齢者に対し適度な塩分を補給するよう指導した。","研究者たちは消費者に対し加工食品の添加物に注意するよう促した。"],{Doctors:"医師たち",warned:"警告した",patients:"患者たち",consuming:"摂取すること",excessive:"過剰な",sugar:"砂糖"}],
+      ["normal","6-8","Remote work transformed traditional office culture permanently.","リモートワークは従来のオフィス文化を恒久的に変革した。",["最新技術は製造業の生産ラインを劇的に効率化した。","フレックス制は若い世代の働き方を一時的に変化させた。","オンライン会議は国際企業の出張コストを大幅に削減した。"],{Remote:"遠隔の",work:"勤務",transformed:"変革した",traditional:"従来の",office:"オフィス",culture:"文化",permanently:"恒久的に"}],
+      ["normal","6-8","Museums preserve fragile artifacts for future generations.","博物館は壊れやすい工芸品を将来の世代のために保存している。",["図書館は貴重な古文書を研究者のためにデジタル化している。","美術館は有名な絵画を世界中の観客のために展示している。","自治体は歴史的な建造物を地域の観光のために修復している。"],{Museums:"博物館",preserve:"保存する",fragile:"壊れやすい",artifacts:"工芸品",future:"将来の",generations:"世代"}],
 
-        // NORMAL 3-5
-        { diff: "normal", len: "3-5", en: "Careful planning prevents costly mistakes.", content: ["Careful","planning","prevents","costly","mistakes"], jp: "入念な計画は手痛い失敗を防ぐ。", wrong: ["拙速な決断は大きな利益を生む。","綿密な調査は新たな課題を発見する。","入念な準備は余計な時間を奪う。"], words: {Careful:"入念な",planning:"計画",prevents:"防ぐ",costly:"手痛い・高価な",mistakes:"失敗"} },
-        { diff: "normal", len: "3-5", en: "Modern satellites predict severe storms.", content: ["Modern","satellites","predict","severe","storms"], jp: "現代の人工衛星は激しい嵐を予測する。", wrong: ["最新の観測船は海底の地震を記録する。","現代の気象台は穏やかな気候を分析する。","大型の人工衛星は世界の通信を支える。"], words: {Modern:"現代の",satellites:"人工衛星",predict:"予測する",severe:"激しい",storms:"嵐"} },
-        { diff: "normal", len: "3-5", en: "Regular exercise improves mental focus.", content: ["Regular","exercise","improves","mental","focus"], jp: "定期的な運動は精神的な集中力を高める。", wrong: ["十分な睡眠は身体の疲労を回復させる。","毎日の読書は論理的な思考力を養う。","適度な休息は仕事の効率を改善する。"], words: {Regular:"定期的な",exercise:"運動",improves:"高める・改善する",mental:"精神の",focus:"集中力"} },
-        { diff: "normal", len: "3-5", en: "Ancient coins revealed hidden routes.", content: ["Ancient","coins","revealed","hidden","routes"], jp: "古代の硬貨が隠された交易路を明らかにした。", wrong: ["古い地図が失われた財宝の場所を示した。","古代の壁画が当時の生活様式を伝えた。","発掘された土器が新たな文化圏を証明した。"], words: {Ancient:"古代の",coins:"硬貨",revealed:"明らかにした",hidden:"隠された",routes:"ルート・道筋"} },
+      // normal 9-12
+      ["normal","9-12","Renewable energy projects reduced carbon emissions across several coastal regions.","再生可能エネルギー事業がいくつかの沿岸地域全体で炭素排出量を削減した。",["新しい環境規制が全国の工業地帯で水質汚染を大幅に減らした。","太陽光発電の導入が山間部の自治体で電力コストを引き下げた。","省エネ技術の普及が複数の都市部で温室効果ガスの増加を抑えた。"],{Renewable:"再生可能な",energy:"エネルギー",projects:"事業",reduced:"削減した",carbon:"炭素",emissions:"排出量",coastal:"沿岸の",regions:"地域"}],
+      ["normal","9-12","Strict privacy laws require tech companies to protect user data.","厳格なプライバシー法はIT企業に利用者データの保護を義務付けている。",["新しい著作権法は配信サービスにクリエイターの利益還元を求めている。","国際的な安全基準は自動車メーカーに品質検査の徹底を課している。","厳格な金融規制は銀行に対して顧客資産の透明な管理を要求している。"],{Strict:"厳格な",privacy:"プライバシー",laws:"法律",require:"要求する",tech:"IT",companies:"企業",protect:"保護する",user:"利用者",data:"データ"}],
+      ["normal","9-12","Agricultural specialists introduced drought-resistant crops to support struggling rural farmers.","農業専門家は苦境にある農村の農家を支援するため干ばつに強い作物を導入した。",["環境保護団体は森林伐採を防ぐため新しい植林プログラムを開始した。","経済学者は地方の中小企業を活性化させるため低金利融資を提案した。","気象学者は異常気象に備えるため最新の観測システムを農村に設置した。"],{Agricultural:"農業の",specialists:"専門家",introduced:"導入した",crops:"作物",support:"支援する",rural:"農村の",farmers:"農家"}],
 
-        // NORMAL 6-8
-        { diff: "normal", len: "6-8", en: "Doctors warned patients against consuming excessive sugar.", content: ["Doctors","warned","patients","consuming","excessive","sugar"], jp: "医師たちは患者に対し過剰な砂糖の摂取を控えるよう警告した。", wrong: ["栄養士たちは学生に対し毎日の朝食を抜かないよう助言した。","医師たちは高齢者に対し適度な塩分を補給するよう指導した。","研究者たちは消費者に対し加工食品の添加物に注意するよう促した。"], words: {Doctors:"医師たち",warned:"警告した",patients:"患者たち",consuming:"摂取すること",excessive:"過剰な",sugar:"砂糖"} },
-        { diff: "normal", len: "6-8", en: "Remote work transformed traditional office culture permanently.", content: ["Remote","work","transformed","traditional","office","culture","permanently"], jp: "リモートワークは従来のオフィス文化を恒久的に変革した。", wrong: ["最新技術は製造業の生産ラインを劇的に効率化した。","フレックス制は若い世代の働き方を一時的に変化させた。","オンライン会議は国際企業の出張コストを大幅に削減した。"], words: {Remote:"遠隔の",work:"勤務・仕事",transformed:"変革した",traditional:"従来の",office:"オフィス",culture:"文化",permanently:"恒久的に"} },
-        { diff: "normal", len: "6-8", en: "Museums preserve fragile artifacts for future generations.", content: ["Museums","preserve","fragile","artifacts","future","generations"], jp: "博物館は壊れやすい工芸品を将来の世代のために保存している。", wrong: ["図書館は貴重な古文書を研究者のためにデジタル化している。","美術館は有名な絵画を世界中の観客のために展示している。","自治体は歴史的な建造物を地域の観光のために修復している。"], words: {Museums:"博物館",preserve:"保存する",fragile:"壊れやすい",artifacts:"工芸品・遺物",future:"将来の",generations:"世代"} },
+      // normal 13+
+      ["normal","13+","Experienced surgeons collaborated closely for six hours to complete the delicate heart operation.","熟練した外科医たちが繊細な心臓手術を完了させるため6時間にわたり緊密に協力した。",["若手の研究員たちが新しい治療薬を開発するため何ヶ月も研究室で実験を続けた。","救急医療チームが重症患者を搬送するため悪天候の中を数時間かけて移動した。","経験豊富な技術者たちが複雑な通信障害を復旧させるため徹夜で作業にあたった。"],{Experienced:"熟練した",surgeons:"外科医",collaborated:"協力した",closely:"緊密に",complete:"完了する",delicate:"繊細な",heart:"心臓",operation:"手術"}],
+      ["normal","13+","Rapid urbanization often strains public transportation networks and reduces affordable housing supplies.","急速な都市化はしばしば公共交通網に負担をかけ、手頃な価格の住宅供給を減少させる。",["急激な人口減少は地方の鉄道網の維持を困難にし、空き家の増加を引き起こす。","大規模な再開発は都心の商業施設を活性化させ、新たな雇用機会を創出する。","観光業の急成長は地域の宿泊施設を不足させ、物価の上昇を招くことがある。"],{Rapid:"急速な",urbanization:"都市化",strains:"負担をかける",public:"公共の",transportation:"交通",networks:"網",reduces:"減らす",affordable:"手頃な",housing:"住宅",supplies:"供給"}],
+      ["normal","13+","Global logistics firms adopted automated sorting systems to accelerate international parcel deliveries significantly.","世界の物流企業は国際小包の配達を大幅に加速させるため自動仕分けシステムを採用した。",["国内の小売業者は人手不足を解消するため無人レジの導入を急速に拡大した。","大手航空会社は燃料消費を抑えるため最新の軽量機体を国際線に投入した。","通信大手はデータ処理速度を向上させるため全国各地に新しい基地局を建設した。"],{Global:"世界の",logistics:"物流",firms:"企業",adopted:"採用した",automated:"自動化された",sorting:"仕分け",accelerate:"加速する",parcel:"小包",deliveries:"配達"}],
 
-        // NORMAL 9-12
-        { diff: "normal", len: "9-12", en: "Renewable energy projects reduced carbon emissions across several coastal regions.", content: ["Renewable","energy","projects","reduced","carbon","emissions","several","coastal","regions"], jp: "再生可能エネルギー事業がいくつかの沿岸地域全体で炭素排出量を削減した。", wrong: ["新しい環境規制が全国の工業地帯で水質汚染を大幅に減らした。","太陽光発電の導入が山間部の自治体で電力コストを引き下げた。","省エネ技術の普及が複数の都市部で温室効果ガスの増加を抑えた。"], words: {Renewable:"再生可能な",energy:"エネルギー",projects:"事業",reduced:"削減した",carbon:"炭素",emissions:"排出量",several:"いくつかの",coastal:"沿岸の",regions:"地域"} },
-        { diff: "normal", len: "9-12", en: "Strict privacy laws require tech companies to protect user data.", content: ["Strict","privacy","laws","require","tech","companies","protect","user","data"], jp: "厳格なプライバシー法はIT企業に利用者データの保護を義務付けている。", wrong: ["新しい著作権法は配信サービスにクリエイターの利益還元を求めている。","国際的な安全基準は自動車メーカーに品質検査の徹底を課している。","厳格な金融規制は銀行に対して顧客資産の透明な管理を要求している。"], words: {Strict:"厳格な",privacy:"プライバシー",laws:"法律",require:"要求する",tech:"技術・IT",companies:"企業",protect:"保護する",user:"利用者",data:"データ"} },
+      // hard 3-5
+      ["hard","3-5","Economic sanctions disrupted global trade.","経済制裁が世界貿易を混乱させた。",["金融緩和が国内消費を刺激した。","貿易協定が国際投資を促進した。","関税撤廃が地域経済を活性化した。"],{Economic:"経済の",sanctions:"制裁",disrupted:"混乱させた",global:"世界の",trade:"貿易"}],
+      ["hard","3-5","Ambiguous policies hinder corporate investment.","曖昧な政策は企業の投資を妨げる。",["明確な基準は海外からの進出を促す。","厳格な規制は市場の独占を抑制する。","柔軟な税制は新規事業の創業を支える。"],{Ambiguous:"曖昧な",policies:"政策",hinder:"妨げる",corporate:"企業の",investment:"投資"}],
+      ["hard","3-5","Empirical evidence refuted earlier assumptions.","実証的な証拠が以前の仮説に反証した。",["理論的な予測が従来の定説を裏付けた。","新たな観測データが初期の仮説を補強した。","統計的な分析が未知の相関関係を示した。"],{Empirical:"実証的な",evidence:"証拠",refuted:"反証した",earlier:"以前の",assumptions:"仮説"}],
+      ["hard","3-5","Demographic shifts strain pension systems.","人口動態の変化が年金制度に負担をかける。",["経済成長が社会保障の財源を拡大する。","労働改革が若年層の雇用率を改善する。","税制改正が地方自治体の歳入を安定させる。"],{Demographic:"人口統計の",shifts:"変化",strain:"負担をかける",pension:"年金",systems:"制度"}],
 
-        // NORMAL 13+
-        { diff: "normal", len: "13+", en: "Experienced surgeons collaborated closely for six hours to complete the delicate heart operation.", content: ["Experienced","surgeons","collaborated","closely","six","hours","complete","delicate","heart","operation"], jp: "熟練した外科医たちが繊細な心臓手術を完了させるため6時間にわたり緊密に協力した。", wrong: ["若手の研究員たちが新しい治療薬を開発するため何ヶ月も研究室で実験を続けた。","救急医療チームが重症患者を搬送するため悪天候の中を数時間かけて移動した。","経験豊富な技術者たちが複雑な通信障害を復旧させるため徹夜で作業にあたった。"], words: {Experienced:"熟練した",surgeons:"外科医",collaborated:"協力した",closely:"緊密に",six:"6",hours:"時間",complete:"完了する",delicate:"繊細な",heart:"心臓",operation:"手術"} },
-        { diff: "normal", len: "13+", en: "Rapid urbanization often strains public transportation networks and reduces affordable housing supplies.", content: ["Rapid","urbanization","often","strains","public","transportation","networks","reduces","affordable","housing","supplies"], jp: "急速な都市化はしばしば公共交通網に負担をかけ、手頃な価格の住宅供給を減少させる。", wrong: ["急激な人口減少は地方の鉄道網の維持を困難にし、空き家の増加を引き起こす。","大規模な再開発は都心の商業施設を活性化させ、新たな雇用機会を創出する。","観光業の急成長は地域の宿泊施設を不足させ、物価の上昇を招くことがある。"], words: {Rapid:"急速な",urbanization:"都市化",often:"しばしば",strains:"負担をかける",public:"公共の",transportation:"交通",networks:"網",reduces:"減らす",affordable:"手頃な",housing:"住宅",supplies:"供給"} },
+      // hard 6-8
+      ["hard","6-8","Scientists discovered rare bacteria beneath deep Antarctic ice.","科学者たちは南極の深い氷の下で珍しい細菌を発見した。",["探検家たちは北極の厚い氷河の下で古代の化石を発見した。","研究者たちは深海の熱水噴出孔の近くで新種の生物を確認した。","科学者たちは高山地帯の永久凍土から未知のウイルスを採取した。"],{Scientists:"科学者",discovered:"発見した",rare:"珍しい",bacteria:"細菌",beneath:"〜の下に",Antarctic:"南極の",ice:"氷"}],
+      ["hard","6-8","Central banks raised interest rates to curb inflation.","中央銀行はインフレを抑制するために金利を引き上げた。",["政府機関は景気を刺激するために大規模な減税を実施した。","中央銀行は通貨安を防ぐために外国為替市場に介入した。","金融機関は企業の資金繰りを支えるため融資基準を緩和した。"],{Central:"中央の",banks:"銀行",raised:"引き上げた",interest:"金利",rates:"率",curb:"抑制する",inflation:"インフレ"}],
+      ["hard","6-8","Volatile commodity prices undermined emerging market currencies.","不安定な商品価格が新興国市場の通貨を弱体化させた。",["堅調な輸出需要が先進国の製造業の収益を押し上げた。","安定したエネルギー供給が地域の産業競争力を強化した。","急激な金利低下が不動産市場への投機資金を流入させた。"],{Volatile:"不安定な",commodity:"商品・一次産品",prices:"価格",undermined:"弱体化させた",emerging:"新興の",currencies:"通貨"}],
 
-        // HARD 3-5
-        { diff: "hard", len: "3-5", en: "Economic sanctions disrupted global trade.", content: ["Economic","sanctions","disrupted","global","trade"], jp: "経済制裁が世界貿易を混乱させた。", wrong: ["金融緩和が国内消費を刺激した。","貿易協定が国際投資を促進した。","関税撤廃が地域経済を活性化した。"], words: {Economic:"経済の",sanctions:"制裁",disrupted:"混乱させた",global:"世界の",trade:"貿易"} },
-        { diff: "hard", len: "3-5", en: "Ambiguous policies hinder corporate investment.", content: ["Ambiguous","policies","hinder","corporate","investment"], jp: "曖昧な政策は企業の投資を妨げる。", wrong: ["明確な基準は海外からの進出を促す。","厳格な規制は市場の独占を抑制する。","柔軟な税制は新規事業の創業を支える。"], words: {Ambiguous:"曖昧な",policies:"政策",hinder:"妨げる",corporate:"企業の",investment:"投資"} },
-        { diff: "hard", len: "3-5", en: "Empirical evidence refuted earlier assumptions.", content: ["Empirical","evidence","refuted","earlier","assumptions"], jp: "実証的な証拠が以前の仮説に反証した。", wrong: ["理論的な予測が従来の定説を裏付けた。","新たな観測データが初期の仮説を補強した。","統計的な分析が未知の相関関係を示した。"], words: {Empirical:"実証的な",evidence:"証拠",refuted:"反証した",earlier:"以前の",assumptions:"仮定・仮説"} },
+      // hard 9-12
+      ["hard","9-12","Ambitious astronomers launched infrared telescopes to observe distant galaxies forming.","野心的な天文学者たちが遠くの銀河が形成される様子を観測するため赤外線望遠鏡を打ち上げた。",["国際宇宙機関が太陽風の活動を監視するため新型の探査機を軌道に投入した。","物理学者たちが暗黒物質の正体を解明するため地下深くに巨大な検出器を建設した。","天文学者たちが地球に接近する小惑星を追跡するため地上の電波望遠鏡を改良した。"],{Ambitious:"野心的な",astronomers:"天文学者",launched:"打ち上げた",infrared:"赤外線の",telescopes:"望遠鏡",observe:"観測する",distant:"遠くの",galaxies:"銀河"}],
+      ["hard","9-12","Pharmaceutical researchers must verify clinical efficacy before seeking regulatory approval.","製薬研究者は規制当局の承認を求める前に臨床的有効性を検証しなければならない。",["食品メーカーは新商品を発売する前にアレルギー成分の表示を確認しなければならない。","医療機器メーカーは市場に流通させた後も安全性データの収集を続けなければならない。","臨床医は新しい治療法を導入する前に患者から十分な同意を得なければならない。"],{Pharmaceutical:"製薬の",researchers:"研究者",verify:"検証する",clinical:"臨床の",efficacy:"有効性",regulatory:"規制の",approval:"承認"}],
+      ["hard","9-12","Geopolitical tensions compelled multinational corporations to diversify fragile supply chains.","地政学的な緊張が多国籍企業に脆弱なサプライチェーンの多様化を強いた。",["技術革新が国内の中小企業に生産工程の完全自動化への投資を促した。","環境規制の強化がエネルギー企業に再生可能資源への転換を義務付けた。","通貨危機の発生が機関投資家に新興国債券の保有比率削減を決断させた。"],{Geopolitical:"地政学的な",tensions:"緊張",compelled:"強いた",multinational:"多国籍の",diversify:"多様化する",fragile:"脆弱な",chains:"連鎖"}],
 
-        // HARD 6-8
-        { diff: "hard", len: "6-8", en: "Scientists discovered rare bacteria beneath deep Antarctic ice.", content: ["Scientists","discovered","rare","bacteria","beneath","deep","Antarctic","ice"], jp: "科学者たちは南極の深い氷の下で珍しい細菌を発見した。", wrong: ["探検家たちは北極の厚い氷河の下で古代の化石を発見した。","研究者たちは深海の熱水噴出孔の近くで新種の生物を確認した。","科学者たちは高山地帯の永久凍土から未知のウイルスを採取した。"], words: {Scientists:"科学者たち",discovered:"発見した",rare:"珍しい",bacteria:"細菌",beneath:"〜の下に",deep:"深い",Antarctic:"南極の",ice:"氷"} },
-        { diff: "hard", len: "6-8", en: "Central banks raised interest rates to curb inflation.", content: ["Central","banks","raised","interest","rates","curb","inflation"], jp: "中央銀行はインフレを抑制するために金利を引き上げた。", wrong: ["政府機関は景気を刺激するために大規模な減税を実施した。","中央銀行は通貨安を防ぐために外国為替市場に介入した。","金融機関は企業の資金繰りを支えるため融資基準を緩和した。"], words: {Central:"中央の",banks:"銀行",raised:"引き上げた",interest:"利子・金利",rates:"率",curb:"抑制する",inflation:"インフレ"} },
+      // hard 13+
+      ["hard","13+","Contemporary neuroscientists investigate the intricate neural mechanisms underlying human memory consolidation and consciousness.","現代の神経科学者たちは人間の記憶の定着と意識の根底にある複雑な神経メカニズムを調査している。",["心理学者たちは幼少期の言語習得と社会性の発達に影響を与える環境要因を分析している。","人工知能の研究者たちは人間の視覚認識を模倣する深層学習モデルの精度を向上させている。","遺伝学者たちは神経変性疾患の発症リスクを高める特定の遺伝子変異を特定しようとしている。"],{Contemporary:"現代の",neuroscientists:"神経科学者",investigate:"調査する",intricate:"複雑な",neural:"神経の",mechanisms:"仕組み",underlying:"根底にある",consolidation:"定着",consciousness:"意識"}],
+      ["hard","13+","Prolonged sovereign debt crises frequently erode investor confidence and trigger severe austerity measures across vulnerable economies.","長期化したソブリン債務危機はしばしば投資家の信頼を損ない、脆弱な経済圏全体で厳しい緊縮策を引き起こす。",["急速な技術革新は従来の労働市場を変化させ、専門職に対する新たな教育投資を必要とする。","大規模な金融緩和政策は一時的に資産価格を押し上げるが、長期的な格差拡大を招く恐れがある。","国際的な貿易摩擦の激化は輸出企業の収益を圧迫し、国内の設備投資計画を遅延させる要因となる。"],{Prolonged:"長期化した",sovereign:"主権の・国の",debt:"債務",erode:"損なう・侵食する",confidence:"信頼",trigger:"引き起こす",austerity:"緊縮",vulnerable:"脆弱な"}],
 
-        // HARD 9-12
-        { diff: "hard", len: "9-12", en: "Ambitious astronomers launched infrared telescopes to observe distant galaxies forming.", content: ["Ambitious","astronomers","launched","infrared","telescopes","observe","distant","galaxies","forming"], jp: "野心的な天文学者たちが遠くの銀河が形成される様子を観測するため赤外線望遠鏡を打ち上げた。", wrong: ["国際宇宙機関が太陽風の活動を監視するため新型の探査機を軌道に投入した。","物理学者たちが暗黒物質の正体を解明するため地下深くに巨大な検出器を建設した。","天文学者たちが地球に接近する小惑星を追跡するため地上の電波望遠鏡を改良した。"], words: {Ambitious:"野心的な",astronomers:"天文学者",launched:"打ち上げた",infrared:"赤外線の",telescopes:"望遠鏡",observe:"観測する",distant:"遠くの",galaxies:"銀河",forming:"形成すること"} },
-        { diff: "hard", len: "9-12", en: "Pharmaceutical researchers must verify clinical efficacy before seeking regulatory approval.", content: ["Pharmaceutical","researchers","verify","clinical","efficacy","seeking","regulatory","approval"], jp: "製薬研究者は規制当局の承認を求める前に臨床的有効性を検証しなければならない。", wrong: ["食品メーカーは新商品を発売する前にアレルギー成分の表示を確認しなければならない。","医療機器メーカーは市場に流通させた後も安全性データの収集を続けなければならない。","臨床医は新しい治療法を導入する前に患者から十分な同意を得なければならない。"], words: {Pharmaceutical:"製薬の",researchers:"研究者",verify:"検証する",clinical:"臨床の",efficacy:"有効性",seeking:"求めること",regulatory:"規制の",approval:"承認"} },
+      // demon 3-5
+      ["demon","3-5","Ephemeral phenomena elude rigid taxonomy.","つかの間の現象は厳格な分類をすり抜ける。",["普遍的な法則は複雑な理論を単純化する。","恒常的な変化は従来の予測を裏付ける。","偶発的な誤差は精密な測定を阻害する。"],{Ephemeral:"つかの間の",phenomena:"現象",elude:"すり抜ける",rigid:"厳格な",taxonomy:"分類法"}],
+      ["demon","3-5","Ostentatious rhetoric obfuscates fiscal insolvency.","華美な修辞は財政破綻を覆い隠す。",["簡潔な報告は経営再建の道筋を示す。","論理的な議論は予算配分の不備を正す。","慎重な分析は長期的な成長を予測する。"],{Ostentatious:"華美な",rhetoric:"修辞",obfuscates:"覆い隠す",fiscal:"財政の",insolvency:"支払い不能"}],
+      ["demon","3-5","Recalcitrant factions stymied bipartisan consensus.","強硬な派閥が超党派の合意を阻止した。",["穏健な議員が新たな法案の成立を主導した。","市民団体が地方議会の透明化を要求した。","連立政権が緊急経済対策の予算を承認した。"],{Recalcitrant:"強硬な・反抗的な",factions:"派閥",stymied:"阻止した",bipartisan:"超党派の",consensus:"合意"}],
+      ["demon","3-5","Perfidious emissaries subverted fragile truces.","不実な使者が脆い休戦協定を覆した。",["中立の調停者が長年の紛争を終結させた。","有能な外交官が通商条約の締結に貢献した。","国際監視団が停戦ラインの維持を確認した。"],{Perfidious:"不実な・裏切りの",emissaries:"使者",subverted:"覆した",fragile:"脆い",truces:"休戦"}],
 
-        // HARD 13+
-        { diff: "hard", len: "13+", en: "Contemporary neuroscientists investigate the intricate neural mechanisms underlying human memory consolidation and consciousness.", content: ["Contemporary","neuroscientists","investigate","intricate","neural","mechanisms","underlying","human","memory","consolidation","consciousness"], jp: "現代の神経科学者たちは人間の記憶の定着と意識の根底にある複雑な神経メカニズムを調査している。", wrong: ["心理学者たちは幼少期の言語習得と社会性の発達に影響を与える環境要因を分析している。","人工知能の研究者たちは人間の視覚認識を模倣する深層学習モデルの精度を向上させている。","遺伝学者たちは神経変性疾患の発症リスクを高める特定の遺伝子変異を特定しようとしている。"], words: {Contemporary:"現代の",neuroscientists:"神経科学者",investigate:"調査する",intricate:"複雑な",neural:"神経の",mechanisms:"仕組み",underlying:"根底にある",human:"人間の",memory:"記憶",consolidation:"定着・統合",consciousness:"意識"} },
+      // demon 6-8
+      ["demon","6-8","Stringent regulatory frameworks mitigate systemic financial vulnerabilities.","厳格な規制の枠組みは金融システム全体の脆弱性を緩和する。",["過度な市場介入は国際的な資本移動の効率性を損なう。","柔軟な金融政策は新興国市場の流動性危機を誘発する。","包括的な税制改革は多国籍企業の租税回避を抑制する。"],{Stringent:"厳格な",regulatory:"規制の",frameworks:"枠組み",mitigate:"緩和する",systemic:"全体の",vulnerabilities:"脆弱性"}],
+      ["demon","6-8","Ubiquitous algorithms inadvertently perpetuate latent societal prejudices.","至る所に存在するアルゴリズムは知らず知らずのうちに潜在的な社会的偏見を永続させる。",["最新の暗号技術は分散型ネットワークの匿名性を恒久的に保証する。","高度な予測モデルは消費者の購買行動の微妙な変化を正確に捉える。","自律的な監視システムは公共空間における違法行為を未然に抑止する。"],{Ubiquitous:"至る所にある",algorithms:"アルゴリズム",inadvertently:"知らずに",perpetuate:"永続させる",latent:"潜在的な",prejudices:"偏見"}],
+      ["demon","6-8","Esoteric treatises elucidate arcane metaphysical doctrines comprehensively.","難解な論文が神秘的な形而上学の教義を包括的に解明する。",["簡潔な入門書が現代物理学の基本原理を分かりやすく解説する。","歴史的な記録が古代文明の統治機構の変遷を詳細に描写する。","実証的な研究が言語習得における認知プロセスの役割を明らかにする。"],{Esoteric:"難解な",treatises:"論文",elucidate:"解明する",arcane:"神秘的な",metaphysical:"形而上学の",doctrines:"教義"}],
 
-        // DEMON 3-5
-        { diff: "demon", len: "3-5", en: "Ephemeral phenomena elude rigid taxonomy.", content: ["Ephemeral","phenomena","elude","rigid","taxonomy"], jp: "つかの間の現象は厳格な分類をすり抜ける。", wrong: ["普遍的な法則は複雑な理論を単純化する。","恒常的な変化は従来の予測を裏付ける。","偶発的な誤差は精密な測定を阻害する。"], words: {Ephemeral:"つかの間の",phenomena:"現象",elude:"すり抜ける・逃れる",rigid:"厳格な",taxonomy:"分類法"} },
-        { diff: "demon", len: "3-5", en: "Ostentatious rhetoric obfuscates fiscal insolvency.", content: ["Ostentatious","rhetoric","obfuscates","fiscal","insolvency"], jp: "華美な修辞は財政破綻を覆い隠す。", wrong: ["簡潔な報告は経営再建の道筋を示す。","論理的な議論は予算配分の不備を正す。","慎重な分析は長期的な成長を予測する。"], words: {Ostentatious:"華美な・見せびらかしの",rhetoric:"修辞・美辞麗句",obfuscates:"覆い隠す・曖昧にする",fiscal:"財政の",insolvency:"支払い不能・破綻"} },
+      // demon 9-12
+      ["demon","9-12","Ambivalent diplomats crafted an equivocal treaty to avert imminent geopolitical escalation.","相反する思惑を抱えた外交官たちは差し迫った地政学的激化を回避するため玉虫色の条約を作り上げた。",["強硬派の指導者たちは領土問題の最終決着を図るため一方的な経済封鎖を断行した。","国際機関の調停団は長期化する内戦を終結させるため拘束力のある停戦協定を締結した。","各国の代表団は通商摩擦の拡大を防ぐため関税の段階的引き下げに関する合意に達した。"],{Ambivalent:"相反する感情の",diplomats:"外交官",crafted:"作り上げた",equivocal:"曖昧な",treaty:"条約",avert:"回避する",imminent:"差し迫った",escalation:"激化"}],
+      ["demon","9-12","Iconoclastic scholars challenged entrenched orthodoxy by presenting incontrovertible archaeological evidence.","因習打破的な学者たちは反論の余地のない考古学的証拠を提示して根強い定説に異議を唱えた。",["保守的な歴史家たちは従来の学説を擁護するため新たな文献資料の解釈を発表した。","若手研究チームは古代都市の交易網を復元するため最新の衛星画像解析を導入した。","言語学者たちは失われた文字体系を解読するため比較言語学の手法を体系化した。"],{Iconoclastic:"因習打破の",scholars:"学者",entrenched:"根強い",orthodoxy:"定説・正統",incontrovertible:"反論できない",archaeological:"考古学の"}],
+      ["demon","9-12","Pernicious disinformation campaigns exacerbate political polarization and undermine democratic institutions.","有害な偽情報キャンペーンは政治的分極化を悪化させ、民主主義制度を弱体化させる。",["透明性の高い選挙監視制度は有権者の信頼を回復し、投票率の向上に寄与する。","独立した報道機関は権力の監視機能を果たし、健全な公共議論の形成を支える。","市民教育の拡充は若年層の政治参加を促し、地域社会の連帯感を強化する。"],{Pernicious:"有害な",disinformation:"偽情報",exacerbate:"悪化させる",polarization:"分極化",undermine:"弱体化させる",institutions:"制度・機関"}],
 
-        // DEMON 6-8
-        { diff: "demon", len: "6-8", en: "Stringent regulatory frameworks mitigate systemic financial vulnerabilities.", content: ["Stringent","regulatory","frameworks","mitigate","systemic","financial","vulnerabilities"], jp: "厳格な規制の枠組みは金融システム全体の脆弱性を緩和する。", wrong: ["過度な市場介入は国際的な資本移動の効率性を損なう。","柔軟な金融政策は新興国市場の流動性危機を誘発する。","包括的な税制改革は多国籍企業の租税回避を抑制する。"], words: {Stringent:"厳格な",regulatory:"規制の",frameworks:"枠組み",mitigate:"緩和する",systemic:"全体の",financial:"金融の",vulnerabilities:"脆弱性"} },
-        { diff: "demon", len: "6-8", en: "Ubiquitous algorithms inadvertently perpetuate latent societal prejudices.", content: ["Ubiquitous","algorithms","inadvertently","perpetuate","latent","societal","prejudices"], jp: "至る所に存在するアルゴリズムは知らず知らずのうちに潜在的な社会的偏見を永続させる。", wrong: ["最新の暗号技術は分散型ネットワークの匿名性を恒久的に保証する。","高度な予測モデルは消費者の購買行動の微妙な変化を正確に捉える。","自律的な監視システムは公共空間における違法行為を未然に抑止する。"], words: {Ubiquitous:"至る所にある",algorithms:"アルゴリズム",inadvertently:"知らずに・うっかり",perpetuate:"永続させる",latent:"潜在的な",societal:"社会の",prejudices:"偏見"} },
+      // demon 13+
+      ["demon","13+","Bioluminescent organisms inhabiting abyssal trenches exhibit extraordinary physiological adaptations that defy conventional evolutionary paradigms.","深海海溝に生息する生物発光生物は、従来の進化論的パラダイムを覆す並外れた生理学的適応を示す。",["熱帯雨林の樹冠に生息する希少な昆虫類は、気候変動に伴う急速な環境変化に対して極めて脆弱である。","極地の氷床下に閉じ込められた古代の微生物は、過酷な低温環境でも代謝を維持する特殊な酵素を持つ。","浅瀬のサンゴ礁に共生する多様な海洋生物は、海水温の上昇によって白化現象と個体数の激減に直面している。"],{Bioluminescent:"生物発光の",organisms:"生物",inhabiting:"生息する",abyssal:"深海の",trenches:"海溝",extraordinary:"並外れた",physiological:"生理学的な",adaptations:"適応",defy:"覆す",paradigms:"パラダイム"}],
+      ["demon","13+","Inscrutable macroeconomic anomalies frequently confound orthodox econometric models during periods of acute systemic liquidity contraction.","不可解なマクロ経済の異常現象は、深刻なシステミック流動性収縮の期間中に従来の計量経済モデルをしばしば困惑させる。",["堅調な企業収益の拡大は、金融引き締め局面においても株式市場の急激な下落を下支えする要因となる。","中央銀行による透明性の高い情報発信は、市場参加者の過度な期待形成を抑制し金利の安定に寄与する。","長期的な人口構造の変化は、労働生産性の向上や技術投資の促進を通じて潜在成長率に影響を及ぼす。"],{Inscrutable:"不可解な",anomalies:"異常現象",confound:"困惑させる",orthodox:"従来の",econometric:"計量経済の",acute:"深刻な",liquidity:"流動性",contraction:"収縮"}],
+      ["demon","13+","Proliferating algorithmic surveillance apparatuses surreptitiously circumscribe individual autonomy while ostensibly optimizing civic security.","増殖するアルゴリズム監視装置は、表面上は市民の安全を最適化しつつ、密かに個人の自律性を制限する。",["分散型ブロックチェーン基盤は、仲介者を排除した透明な取引記録を保証し金融包摂を推進する。","次世代の医療診断支援システムは、膨大な臨床データを解析して希少疾患の早期発見を可能にする。","自動運転モビリティの普及は、都市部の交通渋滞を緩和し高齢者の移動手段を大幅に拡充する。"],{Proliferating:"増殖する",surveillance:"監視",apparatuses:"装置",surreptitiously:"密かに",circumscribe:"制限する",autonomy:"自律性",ostensibly:"表面上は"}]
+    ];
 
-        // DEMON 9-12
-        { diff: "demon", len: "9-12", en: "Ambivalent diplomats crafted an equivocal treaty to avert imminent geopolitical escalation.", content: ["Ambivalent","diplomats","crafted","equivocal","treaty","avert","imminent","geopolitical","escalation"], jp: "相反する思惑を抱えた外交官たちは差し迫った地政学的激化を回避するため玉虫色の条約を作り上げた。", wrong: ["強硬派の指導者たちは領土問題の最終決着を図るため一方的な経済封鎖を断行した。","国際機関の調停団は長期化する内戦を終結させるため拘束力のある停戦協定を締結した。","各国の代表団は通商摩擦の拡大を防ぐため関税の段階的引き下げに関する合意に達した。"], words: {Ambivalent:"相反する感情の",diplomats:"外交官",crafted:"作り上げた",equivocal:"曖昧な・玉虫色の",treaty:"条約",avert:"回避する",imminent:"差し迫った",geopolitical:"地政学的な",escalation:"激化"} },
+    const st = {
+      diff:"easy", len:"3-5", extra:0, mode:"study",
+      qs:[], idx:0, score:0, tapped:[], paused:false,
+      tid:null, limitMs:5000, remMs:5000, lastTick:0, elapsedMs:0,
+      lastOk:false, lastChoice:"",
+      vocab:[], saved:[], retry:[], hist:[], bestTa:{}, apiKey:""
+    };
 
-        // DEMON 13+
-        { diff: "demon", len: "13+", en: "Bioluminescent organisms inhabiting abyssal trenches exhibit extraordinary physiological adaptations that defy conventional evolutionary paradigms.", content: ["Bioluminescent","organisms","inhabiting","abyssal","trenches","exhibit","extraordinary","physiological","adaptations","defy","conventional","evolutionary","paradigms"], jp: "深海海溝に生息する生物発光生物は、従来の進化論的パラダイムを覆す並外れた生理学的適応を示す。", wrong: ["熱帯雨林の樹冠に生息する希少な昆虫類は、気候変動に伴う急速な環境変化に対して極めて脆弱である。","極地の氷床下に閉じ込められた古代の微生物は、過酷な低温環境でも代謝を維持する特殊な酵素を持つ。","浅瀬のサンゴ礁に共生する多様な海洋生物は、海水温の上昇によって白化現象と個体数の激減に直面している。"], words: {Bioluminescent:"生物発光の",organisms:"生物",inhabiting:"生息する",abyssal:"深海の",trenches:"海溝",exhibit:"示す",extraordinary:"並外れた",physiological:"生理学的な",adaptations:"適応",defy:"覆す・逆らう",conventional:"従来の",evolutionary:"進化の",paradigms:"パラダイム・枠組み"} }
-      ];
+    const $ = id => document.getElementById(id);
+    const clean = w => w.replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, "");
+    const shuffle = a => { const b=a.slice(); for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b; };
 
-      // App State
-      const state = {
-        diff: "easy",
-        len: "3-5",
-        extraSeconds: 0,
-        mode: "study", // "study" | "ta"
-        questions: [],
-        currentIndex: 0,
-        score: 0,
-        tappedThisSession: [],
-        isPaused: false,
-        timerId: null,
-        timeLimitMs: 5000,
-        remainingMs: 5000,
-        lastTick: 0,
-        sessionStartTime: 0,
-        totalElapsedMs: 0,
-        lastAnswerCorrect: false,
-        lastUserChoice: "",
-        vocab: [],
-        savedSentences: [],
-        retryQueue: [],
-        seenHistory: [],
-        bestTaTimes: {}
-      };
+    function load(){
+      try{
+        st.vocab=JSON.parse(localStorage.getItem(K.VOCAB)||"[]");
+        st.saved=JSON.parse(localStorage.getItem(K.SAVED)||"[]");
+        st.retry=JSON.parse(localStorage.getItem(K.RETRY)||"[]");
+        st.hist=JSON.parse(localStorage.getItem(K.HIST)||"[]");
+        st.bestTa=JSON.parse(localStorage.getItem(K.TA)||"{}");
+        st.apiKey=localStorage.getItem(K.KEY)||"";
+      }catch(e){}
+    }
 
-      function loadStorage() {
-        try {
-          state.vocab = JSON.parse(localStorage.getItem(STORAGE_KEYS.VOCAB) || "[]");
-          state.savedSentences = JSON.parse(localStorage.getItem(STORAGE_KEYS.SAVED) || "[]");
-          state.retryQueue = JSON.parse(localStorage.getItem(STORAGE_KEYS.RETRY) || "[]");
-          state.seenHistory = JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY) || "[]");
-          state.bestTaTimes = JSON.parse(localStorage.getItem(STORAGE_KEYS.BEST_TA) || "{}");
-        } catch (e) {
-          state.vocab = [];
-          state.savedSentences = [];
-          state.retryQueue = [];
-          state.seenHistory = [];
-          state.bestTaTimes = {};
+    function save(){
+      try{
+        localStorage.setItem(K.VOCAB,JSON.stringify(st.vocab));
+        localStorage.setItem(K.SAVED,JSON.stringify(st.saved));
+        localStorage.setItem(K.RETRY,JSON.stringify(st.retry));
+        localStorage.setItem(K.HIST,JSON.stringify(st.hist.slice(-60)));
+        localStorage.setItem(K.TA,JSON.stringify(st.bestTa));
+        localStorage.setItem(K.KEY,st.apiKey);
+      }catch(e){}
+      refreshBadges();
+    }
+
+    function refreshBadges(){
+      $("vocabBadge").textContent=st.vocab.length;
+      $("savedBadge").textContent=st.saved.length;
+      const aiB=$("aiStatusBanner");
+      if(st.apiKey){
+        aiB.textContent="🤖 AI即興生成モード有効（選んだ難易度・語数で毎回新作生成）";
+        aiB.classList.remove("hidden");
+      }else{
+        aiB.classList.add("hidden");
+      }
+      const matchingRetry=st.retry.filter(r=>r.diff===st.diff && r.len===st.len);
+      const rB=$("retryBanner");
+      if(matchingRetry.length>0){
+        rB.textContent="🔥 この設定で間違えた英文（"+matchingRetry.length+"文）が優先出題されます";
+        rB.classList.remove("hidden");
+      }else{
+        rB.classList.add("hidden");
+      }
+      const vB=$("vocabBanner");
+      if(st.vocab.length>0){
+        vB.textContent="📚 マイ単語帳（"+st.vocab.length+"語）を優先出題中";
+        vB.classList.remove("hidden");
+      }else{
+        vB.classList.add("hidden");
+      }
+    }
+
+    function setView(id){
+      ["viewHome","viewLoading","viewReady","viewPlay","viewQuitConfirm","viewFeedback","viewResult","viewVocab","viewSaved","viewAi"].forEach(v=>{
+        $(v).classList.toggle("hidden", v!==id);
+      });
+      $("mainHeader").classList.toggle("hidden", id==="viewPlay"||id==="viewReady"||id==="viewQuitConfirm"||id==="viewLoading");
+    }
+
+    function lookupMeaning(raw, q){
+      const c=clean(raw), lw=c.toLowerCase();
+      if(q && q.words){
+        for(const k of Object.keys(q.words)) if(k.toLowerCase()===lw) return q.words[k];
+      }
+      const v=st.vocab.find(x=>x.word.toLowerCase()===lw);
+      return v ? v.meaning : "（文脈から意味を掴む重要語）";
+    }
+
+    function addVocab(raw, en, q){
+      const c=clean(raw); if(!c) return null;
+      const m=lookupMeaning(c,q), lw=c.toLowerCase();
+      const idx=st.vocab.findIndex(x=>x.word.toLowerCase()===lw);
+      if(idx>=0) st.vocab[idx].sentence=en;
+      else st.vocab.unshift({word:c,meaning:m,sentence:en});
+      if(!st.tapped.some(x=>x.word.toLowerCase()===lw)) st.tapped.push({word:c,meaning:m});
+      save();
+      return {word:c,meaning:m};
+    }
+
+    function saveSentence(q){
+      if(!st.saved.some(s=>s.en===q.en)){
+        st.saved.unshift({en:q.en,jp:q.jp,words:q.words||{}});
+        save();
+      }
+    }
+
+    function calcTimeMs(q){
+      const wc=q.en.split(/\s+/).length;
+      const jpChars=q.options.reduce((s,o)=>s+o.length,0);
+      const baseSec = 1.8 + wc*0.26 + 1.6 + jpChars*0.085 + (st.mode==="study"?st.extra:0);
+      return Math.round(baseSec*1000);
+    }
+
+    function buildLocalQuestions(count){
+      const out=[], used=new Set();
+      // 1. Retry queue strictly matching current diff & len
+      for(const r of st.retry){
+        if(out.length>=count) break;
+        if(r.diff===st.diff && r.len===st.len && !used.has(r.en)){
+          used.add(r.en);
+          out.push({...r, isRetry:true});
         }
       }
+      // 2. Strictly matching diff & len from RAW_BANK
+      const vocabSet=new Set(st.vocab.map(v=>v.word.toLowerCase()));
+      const recent=new Set(st.hist.slice(-30));
+      const matched=RAW_BANK.filter(r=>r[0]===st.diff && r[1]===st.len && !used.has(r[2]));
 
-      function saveStorage() {
-        try {
-          localStorage.setItem(STORAGE_KEYS.VOCAB, JSON.stringify(state.vocab));
-          localStorage.setItem(STORAGE_KEYS.SAVED, JSON.stringify(state.savedSentences));
-          localStorage.setItem(STORAGE_KEYS.RETRY, JSON.stringify(state.retryQueue));
-          localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(state.seenHistory.slice(-60)));
-          localStorage.setItem(STORAGE_KEYS.BEST_TA, JSON.stringify(state.bestTaTimes));
-        } catch (e) {}
-        updateBadges();
+      const sorted=shuffle(matched).sort((a,b)=>{
+        const ar=recent.has(a[2])?1:0, br=recent.has(b[2])?1:0;
+        if(ar!==br) return ar-br;
+        const av=a[2].toLowerCase().split(/\W+/).some(w=>vocabSet.has(w))?0:1;
+        const bv=b[2].toLowerCase().split(/\W+/).some(w=>vocabSet.has(w))?0:1;
+        return av-bv;
+      });
+
+      // Fill up to 10 (cycling within the exact same diff & len if fewer than 10 unique items exist)
+      let ptr=0;
+      while(out.length<count && sorted.length>0){
+        const r=sorted[ptr % sorted.length];
+        out.push({diff:r[0],len:r[1],en:r[2],jp:r[3],wrong:r[4],words:r[5],isRetry:false});
+        ptr++;
       }
 
-      function updateBadges() {
-        document.getElementById("vocabCountBadge").textContent = state.vocab.length;
-        document.getElementById("savedCountBadge").textContent = state.savedSentences.length;
+      return out.map(q=>({...q, options:shuffle([q.jp,...q.wrong.slice(0,3)])}));
+    }
 
-        const retryBanner = document.getElementById("homeRetryBanner");
-        if (state.retryQueue.length > 0) {
-          retryBanner.textContent = "🔥 前回間違えた英文（" + state.retryQueue.length + "文）が優先的に出題されます！正解するとクリアになります。";
-          retryBanner.classList.remove("hidden");
-        } else {
-          retryBanner.classList.add("hidden");
-        }
+    async function fetchAiQuestions(){
+      const diffMap={easy:"中学レベル(CEFR A1-A2)の基本語彙",normal:"高校〜大学入試基礎(CEFR B1)の実用標準語彙",hard:"英検準1級〜1級・ニュース(CEFR B2-C1)の高度な論理語彙",demon:"GRE・学術論文・専門書(CEFR C2)の極めて難解な語彙"};
+      const lenMap={"3-5":"必ず3〜5語","6-8":"必ず6〜8語","9-12":"必ず9〜12語","13+":"必ず13〜18語"};
+      const vocabHints=st.vocab.slice(0,10).map(v=>v.word).join(", ");
+      const avoidHints=st.hist.slice(-15).join(" | ");
 
-        const vocabBanner = document.getElementById("homeVocabBanner");
-        if (state.vocab.length > 0) {
-          vocabBanner.textContent = "📚 マイ単語帳の単語（" + state.vocab.length + "語）を含む英文を優先出題中";
-          vocabBanner.classList.remove("hidden");
-        } else {
-          vocabBanner.classList.add("hidden");
-        }
+      const prompt = `英語速読ゲーム用の問題を10問JSON配列で生成してください。
+【厳守条件】
+- 単語難易度: ${diffMap[st.diff]}
+- 1文の総単語数: ${lenMap[st.len]}（厳密に守ること）
+- ジャンルは多様に（科学、経済、日常、歴史、心理、環境など）
+- 優先使用単語（可能なら自然な文脈で組み込む）: ${vocabHints || "なし"}
+- 重複回避（これらと似た文は避ける）: ${avoidHints || "なし"}
+- 出力形式: 純粋なJSON配列のみ（マークダウン不要）
+[{"en":"英文","jp":"自然な日本語訳","wrong":["誤答1","誤答2","誤答3"],"words":{"英単語1":"日本語意味","英単語2":"日本語意味"}}]`;
+
+      const ctrl=new AbortController();
+      const to=setTimeout(()=>ctrl.abort(), 12000);
+      try{
+        const res=await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key="+encodeURIComponent(st.apiKey),{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          signal:ctrl.signal,
+          body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.85,responseMimeType:"application/json"}})
+        });
+        clearTimeout(to);
+        if(!res.ok) throw new Error("API Error");
+        const data=await res.json();
+        const txt=data.candidates[0].content.parts[0].text;
+        const parsed=JSON.parse(txt);
+        if(!Array.isArray(parsed) || parsed.length<3) throw new Error("Invalid format");
+
+        const retryMatched=st.retry.filter(r=>r.diff===st.diff && r.len===st.len).map(r=>({...r,isRetry:true}));
+        const aiItems=parsed.slice(0,10).map(x=>({
+          diff:st.diff, len:st.len, en:x.en, jp:x.jp,
+          wrong:(x.wrong||[]).slice(0,3), words:x.words||{}, isRetry:false
+        }));
+        const merged=[...retryMatched, ...aiItems].slice(0,10);
+        return merged.map(q=>({...q, options:shuffle([q.jp,...q.wrong])}));
+      }catch(e){
+        clearTimeout(to);
+        return buildLocalQuestions(10);
       }
+    }
 
-      function setTheme(themeClass) {
-        document.body.className = themeClass;
-      }
-
-      function showOnlyView(viewId) {
-        const views = ["viewHome", "viewReady", "viewPlay", "viewQuitConfirm", "viewFeedback", "viewResult", "viewVocab", "viewSaved"];
-        views.forEach(id => {
-          const el = document.getElementById(id);
-          if (el) {
-            if (id === viewId) el.classList.remove("hidden");
-            else el.classList.add("hidden");
+    function renderTokens(el, q, highlight, toastEl){
+      el.innerHTML="";
+      const wordKeys=new Set(Object.keys(q.words||{}).map(k=>k.toLowerCase()));
+      q.en.split(/\s+/).forEach(tok=>{
+        const sp=document.createElement("span");
+        sp.className="tok";
+        sp.textContent=tok;
+        const c=clean(tok).toLowerCase();
+        const isContent = wordKeys.has(c) || (c.length>2 && !STOP.has(c));
+        if(highlight && isContent) sp.classList.add("cw");
+        sp.addEventListener("click",e=>{
+          e.stopPropagation();
+          const saved=addVocab(tok,q.en,q);
+          if(saved && toastEl){
+            toastEl.textContent="📖 "+saved.word+" : "+saved.meaning+"（単語帳に保存済）";
+            toastEl.classList.remove("hidden");
           }
         });
-        const header = document.getElementById("mainHeader");
-        if (viewId === "viewPlay" || viewId === "viewReady" || viewId === "viewQuitConfirm") {
-          header.classList.add("hidden");
-        } else {
-          header.classList.remove("hidden");
+        el.appendChild(sp);
+        el.appendChild(document.createTextNode(" "));
+      });
+    }
+
+    function runCountdown(){
+      document.body.className="theme-ready";
+      setView("viewReady");
+      const lbl=$("readyLabel");
+      const seq=["Are you ready?","3","2","1","Go!"];
+      let i=0; lbl.textContent=seq[0];
+      const iv=setInterval(()=>{
+        i++;
+        if(i<seq.length) lbl.textContent=seq[i];
+        else{ clearInterval(iv); st.elapsedMs=0; loadQ(0); }
+      },680);
+    }
+
+    function stopTimer(){ if(st.tid){clearInterval(st.tid);st.tid=null;} }
+
+    function startTimer(){
+      stopTimer();
+      st.lastTick=performance.now();
+      st.tid=setInterval(()=>{
+        if(st.paused){ st.lastTick=performance.now(); return; }
+        const now=performance.now(), dt=now-st.lastTick;
+        st.lastTick=now; st.remMs-=dt; st.elapsedMs+=dt;
+        if(st.remMs<=0){ st.remMs=0; updTimerUI(); stopTimer(); onAnswer(null,true); }
+        else updTimerUI();
+      },60);
+    }
+
+    function updTimerUI(){
+      const r=Math.max(0,Math.min(1,st.remMs/st.limitMs));
+      const f=$("timerFill");
+      f.style.width=(r*100).toFixed(1)+"%";
+      f.classList.toggle("danger",r<0.28);
+      $("timerText").textContent="残り "+(st.remMs/1000).toFixed(1)+" 秒";
+    }
+
+    function loadQ(idx){
+      st.idx=idx; st.paused=false;
+      const q=st.qs[idx];
+      if(!st.hist.includes(q.en)){ st.hist.push(q.en); save(); }
+
+      document.body.className="theme-play";
+      setView("viewPlay");
+      $("playProgress").textContent="第 "+(idx+1)+" / "+st.qs.length+" 問";
+      const diffNames={easy:"簡単",normal:"普通",hard:"難しい",demon:"鬼畜"};
+      $("playTag").textContent=diffNames[q.diff]+" / "+q.len+"語";
+      $("retryTag").classList.toggle("hidden",!q.isRetry);
+      $("playToast").classList.add("hidden");
+      renderTokens($("playSentence"),q,false,$("playToast"));
+
+      const box=$("optionsBox"); box.innerHTML="";
+      ["A","B","C","D"].forEach((ch,i)=>{
+        const b=document.createElement("button");
+        b.type="button"; b.className="opt-btn";
+        b.innerHTML='<span class="opt-idx">'+ch+'</span><span>'+q.options[i]+'</span>';
+        b.addEventListener("click",()=>{ stopTimer(); onAnswer(q.options[i],false); });
+        box.appendChild(b);
+      });
+
+      st.limitMs=calcTimeMs(q); st.remMs=st.limitMs;
+      updTimerUI(); startTimer();
+    }
+
+    function onAnswer(opt, timeout){
+      const q=st.qs[st.idx];
+      const ok=!timeout && opt===q.jp;
+      st.lastOk=ok; st.lastChoice=timeout?"時間切れ":opt;
+
+      if(ok){
+        st.score++;
+        if(q.isRetry){ st.retry=st.retry.filter(r=>r.en!==q.en); save(); }
+        document.body.className="theme-correct";
+      }else{
+        if(!st.retry.some(r=>r.en===q.en)){
+          st.retry.push({diff:q.diff,len:q.len,en:q.en,jp:q.jp,wrong:q.wrong,words:q.words||{}});
+          save();
         }
+        saveSentence(q);
+        document.body.className="theme-wrong";
       }
 
-      function cleanWord(raw) {
-        return raw.replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, "");
+      setView("viewFeedback");
+      const h=$("fbHead");
+      h.className="fb-head "+(ok?"ok":"ng");
+      $("fbTitle").textContent=ok?"⭕ 正解！":(timeout?"⏰ 時間切れ…":"❌ 不正解…");
+      $("fbSub").textContent=ok?(q.isRetry?"✨ 苦手クリア！":"ナイス！"):"復習＆保存に追加";
+      $("fbWrongNote").textContent=ok?"":"あなたの回答: "+st.lastChoice;
+
+      $("fbToast").classList.add("hidden");
+      renderTokens($("fbSentence"),q,true,$("fbToast"));
+      $("fbCorrectJp").textContent=q.jp;
+      $("manualSaveBtn").textContent=st.saved.some(s=>s.en===q.en)?"✅ 保存済み":"⭐ この英文を保存する";
+
+      if(st.mode==="ta" && !ok) $("nextBtn").textContent="結果を見る（終了） →";
+      else if(st.idx+1>=st.qs.length) $("nextBtn").textContent="結果発表へ →";
+      else $("nextBtn").textContent="次の問題へ →";
+    }
+
+    function showResult(){
+      const tot=st.qs.length;
+      if(st.mode==="study"){
+        document.body.className="theme-result-study";
+        $("resTitle").textContent="📘 学習モード結果";
+        $("resSub").textContent="お疲れさまでした！間違えた文は同じ難易度で再出題されます。";
+        $("resStats").innerHTML=
+          '<div class="stat-box"><strong style="font-size:1.4rem">'+Math.round(st.score/tot*100)+'%</strong><div style="font-size:.75rem">正答率('+st.score+'/'+tot+')</div></div>'+
+          '<div class="stat-box"><strong style="font-size:1.4rem">'+st.tapped.length+'語</strong><div style="font-size:.75rem">調べた単語</div></div>';
+      }else{
+        const win=st.score===tot;
+        document.body.className=win?"theme-result-ta-win":"theme-result-ta-lose";
+        $("resTitle").textContent=win?"🏆 タイムアタック完全制覇！":"💀 タイムアタック途中終了";
+        const sec=(st.elapsedMs/1000).toFixed(2);
+        const key=st.diff+"_"+st.len;
+        if(win && (!st.bestTa[key] || parseFloat(sec)<st.bestTa[key])){ st.bestTa[key]=parseFloat(sec); save(); }
+        $("resSub").textContent=win?"10問連続ノーミス達成！":"第"+(st.idx+1)+"問目で終了しました。";
+        $("resStats").innerHTML=
+          '<div class="stat-box"><strong style="font-size:1.4rem">'+(win?sec+"秒":st.score+"/"+tot+"問")+'</strong><div style="font-size:.75rem">'+(win?"クリアタイム":"連続正解")+'</div></div>'+
+          '<div class="stat-box"><strong style="font-size:1.4rem">'+(st.bestTa[key]?st.bestTa[key].toFixed(2)+"秒":"--")+'</strong><div style="font-size:.75rem">自己ベスト</div></div>';
       }
+      const tw=$("resTappedWrap"), tl=$("resTappedList");
+      if(st.tapped.length>0){
+        tw.classList.remove("hidden");
+        tl.innerHTML=st.tapped.map(w=>'<div class="item-card" style="display:flex;justify-content:space-between"><strong>'+w.word+'</strong><span>'+w.meaning+'</span></div>').join("");
+      }else tw.classList.add("hidden");
+      setView("viewResult");
+    }
 
-      function lookupWordMeaning(word, questionObj) {
-        const clean = cleanWord(word);
-        const lower = clean.toLowerCase();
-        if (questionObj && questionObj.words) {
-          for (const k of Object.keys(questionObj.words)) {
-            if (k.toLowerCase() === lower) return questionObj.words[k];
-          }
-        }
-        if (BUILTIN_DICTIONARY[lower]) return BUILTIN_DICTIONARY[lower];
-        const existing = state.vocab.find(v => v.word.toLowerCase() === lower);
-        if (existing) return existing.meaning;
-        return "（文脈から意味を推測する内容語）";
+    async function beginSession(mode){
+      st.mode=mode; st.score=0; st.tapped=[];
+      if(st.apiKey){
+        document.body.className="theme-home";
+        setView("viewLoading");
+        st.qs=await fetchAiQuestions();
+      }else{
+        st.qs=buildLocalQuestions(10);
       }
+      runCountdown();
+    }
 
-      function saveWordToVocab(rawWord, sentence, questionObj) {
-        const clean = cleanWord(rawWord);
-        if (!clean) return null;
-        const meaning = lookupWordMeaning(clean, questionObj);
-        const lower = clean.toLowerCase();
+    function goHome(){
+      stopTimer(); st.paused=false;
+      document.body.className="theme-home";
+      refreshBadges(); setView("viewHome");
+    }
 
-        const idx = state.vocab.findIndex(v => v.word.toLowerCase() === lower);
-        if (idx >= 0) {
-          state.vocab[idx].sentence = sentence;
-        } else {
-          state.vocab.unshift({
-            word: clean,
-            meaning: meaning,
-            sentence: sentence,
-            addedAt: Date.now()
-          });
-        }
+    function init(){
+      load(); refreshBadges();
+      document.querySelectorAll("#diffGroup .chip").forEach(b=>b.addEventListener("click",()=>{
+        document.querySelectorAll("#diffGroup .chip").forEach(x=>x.classList.remove("active"));
+        b.classList.add("active"); st.diff=b.dataset.diff; refreshBadges();
+      }));
+      document.querySelectorAll("#lenGroup .chip").forEach(b=>b.addEventListener("click",()=>{
+        document.querySelectorAll("#lenGroup .chip").forEach(x=>x.classList.remove("active"));
+        b.classList.add("active"); st.len=b.dataset.len; refreshBadges();
+      }));
+      $("timeMinusBtn").addEventListener("click",()=>{ if(st.extra>0){st.extra--;$("extraTimeText").textContent="+"+st.extra+"秒";} });
+      $("timePlusBtn").addEventListener("click",()=>{ if(st.extra<10){st.extra++;$("extraTimeText").textContent="+"+st.extra+"秒";} });
 
-        if (!state.tappedThisSession.some(w => w.word.toLowerCase() === lower)) {
-          state.tappedThisSession.push({ word: clean, meaning: meaning });
-        }
-        saveStorage();
-        return { word: clean, meaning: meaning };
-      }
+      $("startStudyBtn").addEventListener("click",()=>beginSession("study"));
+      $("startTaBtn").addEventListener("click",()=>beginSession("ta"));
 
-      function saveSentenceItem(q) {
-        if (!q || !q.en) return;
-        const exists = state.savedSentences.some(s => s.en === q.en);
-        if (!exists) {
-          state.savedSentences.unshift({
-            en: q.en,
-            jp: q.jp,
-            content: q.content || [],
-            words: q.words || {},
-            savedAt: Date.now()
-          });
-          saveStorage();
-        }
-      }
+      $("pauseQuitBtn").addEventListener("click",()=>{ st.paused=true; document.body.className="theme-home"; setView("viewQuitConfirm"); });
+      $("confirmQuitRedBtn").addEventListener("click",goHome);
+      $("cancelQuitBlueBtn").addEventListener("click",()=>{ st.paused=false; document.body.className="theme-play"; setView("viewPlay"); });
 
-      function addToRetryQueue(q) {
-        if (!q || !q.en) return;
-        if (!state.retryQueue.some(item => item.en === q.en)) {
-          state.retryQueue.push({
-            en: q.en,
-            jp: q.jp,
-            wrong: q.wrong,
-            content: q.content || [],
-            words: q.words || {},
-            isRetry: true
-          });
-          saveStorage();
-        }
-      }
+      $("manualSaveBtn").addEventListener("click",()=>{ saveSentence(st.qs[st.idx]); $("manualSaveBtn").textContent="✅ 保存済み"; });
+      $("nextBtn").addEventListener("click",()=>{
+        if((st.mode==="ta" && !st.lastOk) || st.idx+1>=st.qs.length) showResult();
+        else loadQ(st.idx+1);
+      });
 
-      function removeFromRetryQueue(en) {
-        const before = state.retryQueue.length;
-        state.retryQueue = state.retryQueue.filter(item => item.en !== en);
-        if (state.retryQueue.length !== before) saveStorage();
-      }
+      $("againBtn").addEventListener("click",()=>beginSession(st.mode));
+      $("resHomeBtn").addEventListener("click",goHome);
+      $("logoHomeBtn").addEventListener("click",goHome);
 
-      function shuffle(arr) {
-        const a = arr.slice();
-        for (let i = a.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [a[i], a[j]] = [a[j], a[i]];
-        }
-        return a;
-      }
-
-      // Dynamic Japanese Choice Reading Time + Native Reading Speed + User Buffer
-      function computeTimeLimitMs(q) {
-        const wordCount = q.en.split(/\s+/).length;
-        // Native speed (~250 wpm => ~0.24s/word) + cognitive processing base 1.8s
-        const nativeReadSec = 1.8 + wordCount * 0.26;
-        // Japanese 4 choices reading & comparison time (~14 chars/sec + comparison buffer)
-        const totalJpChars = q.options.reduce((sum, opt) => sum + opt.length, 0);
-        const jpChoiceReadSec = 1.6 + totalJpChars * 0.085;
-        const extraSec = state.mode === "study" ? state.extraSeconds : 0;
-        return Math.round((nativeReadSec + jpChoiceReadSec + extraSec) * 1000);
-      }
-
-      function buildQuestionSession() {
-        const list = [];
-        const usedEn = new Set();
-
-        // 1. Prioritize missed sentences from retryQueue
-        for (const rq of state.retryQueue) {
-          if (list.length >= 10) break;
-          if (!usedEn.has(rq.en)) {
-            usedEn.add(rq.en);
-            list.push({ ...rq, isRetry: true });
-          }
-        }
-
-        // 2. Filter matching diff & len, avoiding recent history, prioritizing vocab words
-        const vocabSet = new Set(state.vocab.map(v => v.word.toLowerCase()));
-        const recentSet = new Set(state.seenHistory.slice(-30));
-
-        let candidates = QUESTION_BANK.filter(item => item.diff === state.diff && item.len === state.len && !usedEn.has(item.en));
-        if (candidates.length < 10) {
-          const sameDiff = QUESTION_BANK.filter(item => item.diff === state.diff && !usedEn.has(item.en));
-          candidates = candidates.concat(shuffle(sameDiff));
-        }
-        if (candidates.length < 10) {
-          const rest = QUESTION_BANK.filter(item => !usedEn.has(item.en));
-          candidates = candidates.concat(shuffle(rest));
-        }
-
-        // Score candidates: unseen > seen, contains vocab word > no vocab word
-        candidates = shuffle(candidates).sort((a, b) => {
-          const aRecent = recentSet.has(a.en) ? 1 : 0;
-          const bRecent = recentSet.has(b.en) ? 1 : 0;
-          if (aRecent !== bRecent) return aRecent - bRecent;
-
-          const aVocabHit = a.en.toLowerCase().split(/\W+/).some(w => vocabSet.has(w)) ? 0 : 1;
-          const bVocabHit = b.en.toLowerCase().split(/\W+/).some(w => vocabSet.has(w)) ? 0 : 1;
-          return aVocabHit - bVocabHit;
+      $("openVocabBtn").addEventListener("click",()=>{
+        stopTimer(); document.body.className="theme-home";
+        const box=$("vocabList");
+        box.innerHTML=st.vocab.length?"":'<p style="color:#64748b;text-align:center">保存された単語はありません</p>';
+        st.vocab.forEach((v,i)=>{
+          const d=document.createElement("div"); d.className="item-card";
+          d.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><div><strong style="color:#4f46e5">'+v.word+'</strong> : '+v.meaning+'</div><button type="button" class="del-btn">削除</button></div><div style="font-size:.78rem;color:#64748b;margin-top:4px">'+v.sentence+'</div>';
+          d.querySelector(".del-btn").addEventListener("click",()=>{ st.vocab.splice(i,1); save(); $("openVocabBtn").click(); });
+          box.appendChild(d);
         });
+        setView("viewVocab");
+      });
+      $("closeVocabBtn").addEventListener("click",goHome);
 
-        for (const item of candidates) {
-          if (list.length >= 10) break;
-          if (!usedEn.has(item.en)) {
-            usedEn.add(item.en);
-            list.push({ ...item, isRetry: false });
-          }
-        }
-
-        // Prepare shuffled 4 options for each question
-        return list.slice(0, 10).map(q => {
-          const options = shuffle([q.jp, ...(q.wrong || []).slice(0, 3)]);
-          return { ...q, options };
+      $("openSavedBtn").addEventListener("click",()=>{
+        stopTimer(); document.body.className="theme-home";
+        const box=$("savedList");
+        box.innerHTML=st.saved.length?"":'<p style="color:#64748b;text-align:center">保存された英文はありません</p>';
+        st.saved.forEach((s,i)=>{
+          const d=document.createElement("div"); d.className="item-card";
+          const wk=new Set(Object.keys(s.words||{}).map(k=>k.toLowerCase()));
+          const html=s.en.split(/\s+/).map(t=>wk.has(clean(t).toLowerCase())?'<span style="color:#dc2626;background:#fee2e2;padding:1px 3px;border-radius:4px">'+t+'</span>':t).join(" ");
+          d.innerHTML='<div style="font-weight:800;line-height:1.5">'+html+'</div><div style="font-size:.84rem;color:#475569;margin:6px 0">'+s.jp+'</div><div style="text-align:right"><button type="button" class="del-btn">削除</button></div>';
+          d.querySelector(".del-btn").addEventListener("click",()=>{ st.saved.splice(i,1); save(); $("openSavedBtn").click(); });
+          box.appendChild(d);
         });
-      }
+        setView("viewSaved");
+      });
+      $("closeSavedBtn").addEventListener("click",goHome);
 
-      function renderSentenceTokens(container, q, highlightContentWords, toastEl) {
-        container.innerHTML = "";
-        const contentSet = new Set((q.content || []).map(w => cleanWord(w).toLowerCase()));
-        const tokens = q.en.split(/\s+/);
+      $("openAiBtn").addEventListener("click",()=>{
+        stopTimer(); document.body.className="theme-home";
+        $("apiKeyInput").value=st.apiKey;
+        setView("viewAi");
+      });
+      $("closeAiBtn").addEventListener("click",goHome);
+      $("saveApiKeyBtn").addEventListener("click",()=>{ st.apiKey=$("apiKeyInput").value.trim(); save(); goHome(); });
+      $("clearApiKeyBtn").addEventListener("click",()=>{ st.apiKey=""; $("apiKeyInput").value=""; save(); goHome(); });
+    }
 
-        tokens.forEach(tok => {
-          const span = document.createElement("span");
-          span.className = "word-token";
-          span.textContent = tok;
-
-          const cleaned = cleanWord(tok).toLowerCase();
-          const isContent = contentSet.has(cleaned) || (cleaned.length > 2 && !STOP_WORDS.has(cleaned) && contentSet.size === 0);
-
-          if (highlightContentWords && isContent) {
-            span.classList.add("content-word");
-          }
-
-          span.addEventListener("click", (e) => {
-            e.stopPropagation();
-            const saved = saveWordToVocab(tok, q.en, q);
-            if (saved && toastEl) {
-              toastEl.innerHTML = "<span>📖 <strong>" + saved.word + "</strong> : " + saved.meaning + "</span><span style='font-size:0.74rem; color:#15803d;'>単語帳に保存済</span>";
-              toastEl.classList.remove("hidden");
-            }
-          });
-
-          container.appendChild(span);
-          container.appendChild(document.createTextNode(" "));
-        });
-      }
-
-      function startCountdownThenPlay() {
-        setTheme("theme-ready");
-        showOnlyView("viewReady");
-        const label = document.getElementById("readyLabel");
-        const steps = ["Are you ready?", "3", "2", "1", "Go!"];
-        let idx = 0;
-        label.textContent = steps[0];
-
-        const stepInterval = setInterval(() => {
-          idx++;
-          if (idx < steps.length) {
-            label.style.animation = "none";
-            void label.offsetWidth;
-            label.style.animation = "popIn 0.28s ease";
-            label.textContent = steps[idx];
-          } else {
-            clearInterval(stepInterval);
-            state.sessionStartTime = performance.now();
-            state.totalElapsedMs = 0;
-            loadQuestion(0);
-          }
-        }, 720);
-      }
-
-      function startTimer() {
-        stopTimer();
-        state.lastTick = performance.now();
-        state.timerId = setInterval(() => {
-          if (state.isPaused) {
-            state.lastTick = performance.now();
-            return;
-          }
-          const now = performance.now();
-          const dt = now - state.lastTick;
-          state.lastTick = now;
-          state.remainingMs -= dt;
-          state.totalElapsedMs += dt;
-
-          if (state.remainingMs <= 0) {
-            state.remainingMs = 0;
-            updateTimerUI();
-            stopTimer();
-            handleAnswer(null, true);
-          } else {
-            updateTimerUI();
-          }
-        }, 50);
-      }
-
-      function stopTimer() {
-        if (state.timerId) {
-          clearInterval(state.timerId);
-          state.timerId = null;
-        }
-      }
-
-      function updateTimerUI() {
-        const ratio = Math.max(0, Math.min(1, state.remainingMs / state.timeLimitMs));
-        const fill = document.getElementById("timerFill");
-        fill.style.width = (ratio * 100).toFixed(1) + "%";
-        if (ratio < 0.28) fill.classList.add("danger");
-        else fill.classList.remove("danger");
-
-        document.getElementById("timerDetailText").textContent = "残り " + (state.remainingMs / 1000).toFixed(1) + " 秒";
-      }
-
-      function loadQuestion(index) {
-        state.currentIndex = index;
-        state.isPaused = false;
-        const q = state.questions[index];
-
-        // Record in seen history
-        if (!state.seenHistory.includes(q.en)) {
-          state.seenHistory.push(q.en);
-          saveStorage();
-        }
-
-        setTheme("theme-play");
-        showOnlyView("viewPlay");
-
-        document.getElementById("playProgressText").textContent = "第 " + (index + 1) + " / " + state.questions.length + " 問";
-        document.getElementById("playModeBadge").textContent = state.mode === "study" ? "📘 学習" : "⏱️ TA";
-
-        const retryBadge = document.getElementById("retryBadge");
-        if (q.isRetry) retryBadge.classList.remove("hidden");
-        else retryBadge.classList.add("hidden");
-
-        const toast = document.getElementById("playWordToast");
-        toast.classList.add("hidden");
-        renderSentenceTokens(document.getElementById("playSentenceBox"), q, false, toast);
-
-        const optContainer = document.getElementById("optionsContainer");
-        optContainer.innerHTML = "";
-        const labels = ["A", "B", "C", "D"];
-        q.options.forEach((optText, i) => {
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "option-btn";
-          btn.innerHTML = '<span class="option-index">' + labels[i] + '</span><span>' + optText + '</span>';
-          btn.addEventListener("click", () => {
-            stopTimer();
-            handleAnswer(optText, false);
-          });
-          optContainer.appendChild(btn);
-        });
-
-        state.timeLimitMs = computeTimeLimitMs(q);
-        state.remainingMs = state.timeLimitMs;
-        updateTimerUI();
-        startTimer();
-      }
-
-      function handleAnswer(selectedOption, isTimeout) {
-        const q = state.questions[state.currentIndex];
-        const isCorrect = !isTimeout && selectedOption === q.jp;
-        state.lastAnswerCorrect = isCorrect;
-        state.lastUserChoice = isTimeout ? "時間切れ" : selectedOption;
-
-        if (isCorrect) {
-          state.score++;
-          if (q.isRetry) {
-            removeFromRetryQueue(q.en);
-          }
-          setTheme("theme-correct");
-        } else {
-          addToRetryQueue(q);
-          saveSentenceItem(q);
-          setTheme("theme-wrong");
-        }
-
-        showOnlyView("viewFeedback");
-
-        const banner = document.getElementById("feedbackBanner");
-        const title = document.getElementById("feedbackTitle");
-        const subBadge = document.getElementById("feedbackSubBadge");
-        const userNote = document.getElementById("feedbackUserChoiceNote");
-
-        if (isCorrect) {
-          banner.className = "feedback-banner ok";
-          title.textContent = "⭕ 正解！";
-          subBadge.textContent = q.isRetry ? "✨ 苦手克服クリア！" : "ナイス速読！";
-          userNote.textContent = "";
-        } else {
-          banner.className = "feedback-banner ng";
-          title.textContent = isTimeout ? "⏰ 時間切れ…" : "❌ 不正解…";
-          subBadge.textContent = "復習リスト＆保存英文に追加";
-          userNote.textContent = "あなたの回答: " + state.lastUserChoice;
-        }
-
-        const fbToast = document.getElementById("feedbackWordToast");
-        fbToast.classList.add("hidden");
-        renderSentenceTokens(document.getElementById("feedbackSentenceBox"), q, true, fbToast);
-        document.getElementById("feedbackCorrectJp").textContent = q.jp;
-
-        const saveBtn = document.getElementById("manualSaveSentenceBtn");
-        const alreadySaved = state.savedSentences.some(s => s.en === q.en);
-        saveBtn.textContent = alreadySaved ? "✅ 保存した英文に登録済み" : "⭐ この英文を保存する";
-
-        const nextBtn = document.getElementById("nextQuestionBtn");
-        if (state.mode === "ta" && !isCorrect) {
-          nextBtn.textContent = "結果を見る（途中終了） →";
-        } else if (state.currentIndex + 1 >= state.questions.length) {
-          nextBtn.textContent = "結果発表へ →";
-        } else {
-          nextBtn.textContent = "次の問題へ（第 " + (state.currentIndex + 2) + " 問） →";
-        }
-      }
-
-      function showResultScreen() {
-        const total = state.questions.length;
-        const grid = document.getElementById("resultStatsGrid");
-        const heading = document.getElementById("resultHeading");
-        const subText = document.getElementById("resultSubText");
-
-        if (state.mode === "study") {
-          setTheme("theme-result-study");
-          heading.textContent = "📘 学習モード 結果";
-          const rate = Math.round((state.score / total) * 100);
-          subText.textContent = "10問お疲れさまでした！間違えた英文は次回もリベンジ出題されます。";
-          grid.innerHTML =
-            '<div class="stat-box"><div class="stat-num">' + rate + '%</div><div class="stat-label">正答率（' + state.score + '/' + total + '問）</div></div>' +
-            '<div class="stat-box"><div class="stat-num">' + state.tappedThisSession.length + '語</div><div class="stat-label">今回調べた単語</div></div>';
-        } else {
-          const clearedAll = state.score === total;
-          if (clearedAll) {
-            setTheme("theme-result-ta-win");
-            heading.textContent = "🏆 タイムアタック完全制覇！";
-            const sec = (state.totalElapsedMs / 1000).toFixed(2);
-            const totalWords = state.questions.reduce((acc, q) => acc + q.en.split(/\s+/).length, 0);
-            const nativeTargetSec = (totalWords * 0.25 + total * 1.4).toFixed(1);
-            const key = state.diff + "_" + state.len;
-            const prevBest = state.bestTaTimes[key];
-            if (!prevBest || parseFloat(sec) < prevBest) {
-              state.bestTaTimes[key] = parseFloat(sec);
-              saveStorage();
-            }
-            const bestDisplay = state.bestTaTimes[key].toFixed(2) + "秒";
-            subText.textContent = "10問連続ノーミス達成！ネイティブ基準タイム（約" + nativeTargetSec + "秒）と競おう！";
-            grid.innerHTML =
-              '<div class="stat-box"><div class="stat-num">' + sec + '秒</div><div class="stat-label">今回のクリアタイム</div></div>' +
-              '<div class="stat-box"><div class="stat-num">' + bestDisplay + '</div><div class="stat-label">自己ベスト（' + state.diff + '）</div></div>';
-          } else {
-            setTheme("theme-result-ta-lose");
-            heading.textContent = "💀 タイムアタック途中終了";
-            subText.textContent = "第 " + (state.currentIndex + 1) + " 問目でミスが発生しました。全問連続正解を目指そう！";
-            grid.innerHTML =
-              '<div class="stat-box"><div class="stat-num">' + state.score + ' / ' + total + '</div><div class="stat-label">連続正解数</div></div>' +
-              '<div class="stat-box"><div class="stat-num">' + (state.totalElapsedMs / 1000).toFixed(1) + '秒</div><div class="stat-label">生存タイム</div></div>';
-          }
-        }
-
-        const tappedWrap = document.getElementById("resultTappedWrap");
-        const tappedList = document.getElementById("resultTappedList");
-        if (state.tappedThisSession.length > 0) {
-          tappedWrap.classList.remove("hidden");
-          tappedList.innerHTML = state.tappedThisSession.map(w =>
-            '<div class="list-item-card" style="padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">' +
-            '<strong>' + w.word + '</strong><span style="color:#475569; font-size:0.88rem;">' + w.meaning + '</span></div>'
-          ).join("");
-        } else {
-          tappedWrap.classList.add("hidden");
-        }
-
-        showOnlyView("viewResult");
-      }
-
-      function renderVocabPage() {
-        const container = document.getElementById("vocabListContainer");
-        if (state.vocab.length === 0) {
-          container.innerHTML = '<p style="text-align:center; color:#64748b; padding:24px 0;">まだ保存された単語はありません。<br>プレイ中に分からない英単語をタップすると自動で追加されます。</p>';
-          return;
-        }
-        container.innerHTML = "";
-        state.vocab.forEach((item, idx) => {
-          const card = document.createElement("div");
-          card.className = "list-item-card";
-          card.innerHTML =
-            '<div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">' +
-            '<div><strong style="font-size:1.08rem; color:#4f46e5;">' + item.word + '</strong> <span style="font-weight:700; color:#0f172a; margin-left:6px;">' + item.meaning + '</span></div>' +
-            '<button type="button" class="delete-mini-btn">覚えた(削除)</button>' +
-            '</div>' +
-            '<div style="font-size:0.82rem; color:#475569; margin-top:6px; background:#f8fafc; padding:6px 10px; border-radius:8px;">' + item.sentence + '</div>';
-
-          card.querySelector(".delete-mini-btn").addEventListener("click", () => {
-            state.vocab.splice(idx, 1);
-            saveStorage();
-            renderVocabPage();
-          });
-          container.appendChild(card);
-        });
-      }
-
-      function renderSavedSentencesPage() {
-        const container = document.getElementById("savedListContainer");
-        if (state.savedSentences.length === 0) {
-          container.innerHTML = '<p style="text-align:center; color:#64748b; padding:24px 0;">保存された英文はまだありません。<br>間違えた英文や、解説画面で「保存する」を押した英文がここに並びます。</p>';
-          return;
-        }
-        container.innerHTML = "";
-        state.savedSentences.forEach((item, idx) => {
-          const card = document.createElement("div");
-          card.className = "list-item-card";
-
-          const contentSet = new Set((item.content || []).map(w => cleanWord(w).toLowerCase()));
-          const highlightedHtml = item.en.split(/\s+/).map(tok => {
-            const c = cleanWord(tok).toLowerCase();
-            if (contentSet.has(c)) {
-              return '<span style="color:#dc2626; background:#fee2e2; padding:1px 4px; border-radius:6px; font-weight:800;">' + tok + '</span>';
-            }
-            return tok;
-          }).join(" ");
-
-          card.innerHTML =
-            '<div style="font-size:1.02rem; font-weight:800; line-height:1.6; color:#0f172a;">' + highlightedHtml + '</div>' +
-            '<div style="font-size:0.88rem; font-weight:700; color:#475569; margin:8px 0;">' + item.jp + '</div>' +
-            '<div style="text-align:right;"><button type="button" class="delete-mini-btn">削除</button></div>';
-
-          card.querySelector(".delete-mini-btn").addEventListener("click", () => {
-            state.savedSentences.splice(idx, 1);
-            saveStorage();
-            renderSavedSentencesPage();
-          });
-          container.appendChild(card);
-        });
-      }
-
-      function startGame(mode) {
-        state.mode = mode;
-        state.score = 0;
-        state.tappedThisSession = [];
-        state.questions = buildQuestionSession();
-        startCountdownThenPlay();
-      }
-
-      function goHome() {
-        stopTimer();
-        state.isPaused = false;
-        setTheme("theme-home");
-        updateBadges();
-        showOnlyView("viewHome");
-      }
-
-      function initApp() {
-        loadStorage();
-        updateBadges();
-
-        // Difficulty selection
-        document.querySelectorAll("#diffGroup .choice-chip").forEach(btn => {
-          btn.addEventListener("click", () => {
-            document.querySelectorAll("#diffGroup .choice-chip").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-            state.diff = btn.getAttribute("data-diff");
-          });
-        });
-
-        // Length selection
-        document.querySelectorAll("#lenGroup .choice-chip").forEach(btn => {
-          btn.addEventListener("click", () => {
-            document.querySelectorAll("#lenGroup .choice-chip").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-            state.len = btn.getAttribute("data-len");
-          });
-        });
-
-        // Extra time (+0s to +10s)
-        const extraDisplay = document.getElementById("extraTimeDisplay");
-        document.getElementById("timeMinusBtn").addEventListener("click", () => {
-          if (state.extraSeconds > 0) {
-            state.extraSeconds--;
-            extraDisplay.textContent = "+" + state.extraSeconds + "秒";
-          }
-        });
-        document.getElementById("timePlusBtn").addEventListener("click", () => {
-          if (state.extraSeconds < 10) {
-            state.extraSeconds++;
-            extraDisplay.textContent = "+" + state.extraSeconds + "秒";
-          }
-        });
-
-        // Mode start buttons
-        document.getElementById("startStudyBtn").addEventListener("click", () => startGame("study"));
-        document.getElementById("startTaBtn").addEventListener("click", () => startGame("ta"));
-
-        // Pause / Quit in-game (hides active question completely)
-        document.getElementById("pauseQuitBtn").addEventListener("click", () => {
-          state.isPaused = true;
-          setTheme("theme-home");
-          showOnlyView("viewQuitConfirm");
-        });
-
-        document.getElementById("confirmQuitRedBtn").addEventListener("click", () => {
-          goHome();
-        });
-
-        document.getElementById("cancelQuitBlueBtn").addEventListener("click", () => {
-          state.isPaused = false;
-          setTheme("theme-play");
-          showOnlyView("viewPlay");
-        });
-
-        // Feedback next & manual save
-        document.getElementById("manualSaveSentenceBtn").addEventListener("click", () => {
-          const q = state.questions[state.currentIndex];
-          saveSentenceItem(q);
-          document.getElementById("manualSaveSentenceBtn").textContent = "✅ 保存した英文に登録済み";
-        });
-
-        document.getElementById("nextQuestionBtn").addEventListener("click", () => {
-          if (state.mode === "ta" && !state.lastAnswerCorrect) {
-            showResultScreen();
-            return;
-          }
-          if (state.currentIndex + 1 >= state.questions.length) {
-            showResultScreen();
-          } else {
-            loadQuestion(state.currentIndex + 1);
-          }
-        });
-
-        // Result navigation
-        document.getElementById("playAgainBtn").addEventListener("click", () => startGame(state.mode));
-        document.getElementById("backHomeFromResultBtn").addEventListener("click", goHome);
-
-        // Header navigation
-        document.getElementById("logoHomeBtn").addEventListener("click", goHome);
-        document.getElementById("openVocabBtn").addEventListener("click", () => {
-          stopTimer();
-          setTheme("theme-home");
-          renderVocabPage();
-          showOnlyView("viewVocab");
-        });
-        document.getElementById("closeVocabBtn").addEventListener("click", goHome);
-
-        document.getElementById("openSavedBtn").addEventListener("click", () => {
-          stopTimer();
-          setTheme("theme-home");
-          renderSavedSentencesPage();
-          showOnlyView("viewSaved");
-        });
-        document.getElementById("closeSavedBtn").addEventListener("click", goHome);
-      }
-
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initApp);
-      } else {
-        initApp();
-      }
-    })();
+    if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init);
+    else init();
+  })();
   </script>
 </body>
 </html>
